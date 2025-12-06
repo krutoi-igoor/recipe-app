@@ -24,7 +24,7 @@ Main differentiator: **paste a social/video URL and get a clean, structured reci
 - Frontend: React 18 + Vite
 - Backend: Node.js/Express
 - Data: PostgreSQL, Redis
-- Infra (dev): Docker Compose (db, redis, backend, frontend)
+- Infra (dev): Podman + podman-compose (db, redis, backend, frontend)
 
 ## Repo Structure
 - `backend/` – Express API scaffold (health route in place)
@@ -36,12 +36,14 @@ Main differentiator: **paste a social/video URL and get a clean, structured reci
 
 ## Quick Start (local, dev)
 1) Copy `.env.example` → `.env` and fill secrets.  
-2) `docker compose up -d` (starts Postgres, Redis, backend, frontend).  
+2) `podman-compose up -d` (starts Postgres, Redis, backend, frontend).  
 3) Visit `http://localhost:5173` → should show frontend and hit backend health.  
 
 Run services without Compose:
 - Backend: `cd backend && npm ci && npm run dev`
 - Frontend: `cd frontend && npm ci && npm run dev`
+
+**Note:** We use **Podman** for containerized development (alternative to Docker). See `docs/developer-setup.md` for installation.
 
 ## Status
 - Planning docs done (API, design system, architecture, testing, hosting, setup).

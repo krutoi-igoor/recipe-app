@@ -29,8 +29,8 @@
 ---
 
 ## 3) Environments & Data
-- **Local:** Dev stack via docker-compose; use seeded fixtures for repeatable runs.
-- **Test (CI):** Spin ephemeral Postgres/Redis via docker compose or Testcontainers. No external network calls; mock AI/OCR.
+- **Local:** Dev stack via podman-compose; use seeded fixtures for repeatable runs.
+- **Test (CI):** Spin ephemeral Postgres/Redis via podman-compose or Testcontainers. No external network calls; mock AI/OCR.
 - **Prod:** No tests in prod; use `/health` and logging/alerts.
 
 ### Seed Data (minimum viable)

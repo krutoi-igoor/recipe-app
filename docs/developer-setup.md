@@ -11,7 +11,10 @@
 - Node.js 20 LTS (nvm recommended)
 - npm 10+ (ships with Node 20)
 - Git
-- Docker Desktop (for local Postgres/Redis via compose)
+- **Podman** (or Docker Desktop) for containerized local development
+  - **Windows/WSL2:** Install Podman + WSL2 Ubuntu, then `sudo apt install podman podman-compose`
+  - **macOS/Linux:** Install Podman + pipx, then `pipx install podman-compose`
+  - See [Podman installation](https://podman.io/docs/installation)
 - VS Code (recommended) with extensions: ESLint, Prettier, Prisma, GitLens, vscode-icons
 - Optional: pgAdmin or TablePlus for DB, Postman/Insomnia for API
 
@@ -55,31 +58,24 @@ VITE_API_BASE=http://localhost:3000/api/v1
 
 ---
 
-## 4) Local Services via Docker Compose
-Create `docker-compose.yml` in project root:
-```yaml
-version: '3.9'
-services:
-  db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: recipe_app
-    ports:
-      - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
+## 4) Local Services via Podman Compose
+We use **Podman** instead of Docker for local containerized development. `docker-compose.yml` is in the project root and is compatible with podman-compose:
 
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
+```bash
+# Start all services (Postgres, Redis, backend, frontend)
+podman-compose up -d
 
-volumes:
-  db_data:
+# View running containers
+podman-compose ps
+
+# View logs
+podman-compose logs backend   # or frontend, db, redis
+
+# Stop all services
+podman-compose down
 ```
-Run: `docker compose up -d`
+
+**Note:** The `docker-compose.yml` uses fully qualified image names (e.g., `docker.io/library/postgres:16-alpine`) for Podman registry compatibility. Services are automatically hot-reloaded on code changes.
 
 ---
 
@@ -141,10 +137,25 @@ server: {
 ---
 
 ## 7) Running Full Stack Locally
-- Start DB/Redis: `docker compose up -d`
-- Start backend: `npm run dev` in `backend`
-- Start frontend: `npm run dev` in `frontend`
-- Visit `http://localhost:5173`
+
+**Option A: Containerized (recommended)**
+```bash
+podman-compose up -d
+# All services start: Postgres, Redis, backend, frontend (with hot-reload)
+# Visit http://localhost:5173
+```
+
+**Option B: Local Node.js (no containers)**
+```bash
+# Terminal 1: Start backend
+cd backend && npm ci && npm run dev   # :3000
+
+# Terminal 2: Start frontend
+cd frontend && npm ci && npm run dev  # :5173
+
+# Manual: Start local Postgres/Redis or use cloud instances
+# Set DATABASE_URL and REDIS_URL in .env
+```
 
 ---
 
@@ -198,13 +209,15 @@ Create `.vscode/settings.json`:
 
 ---
 
-## 13) Common Commands
-- `docker compose up -d` — start services
-- `docker compose down` — stop services
+## 13) Common Commands (Podman)
+- `podman-compose up -d` — start all containerized services
+- `podman-compose down` — stop all services
+- `podman-compose logs <service>` — view logs (service: backend, frontend, db, redis)
+- `podman-compose ps` — list running containers
 - `npm test` — run tests (per package)
 - `npm run lint` — run linters
-- `pm2 logs recipe-app` — view prod logs
-- `pm2 restart recipe-app` — restart prod app
+- `pm2 logs recipe-app` — view prod logs (server only)
+- `pm2 restart recipe-app` — restart prod app (server only)
 
 ---
 
