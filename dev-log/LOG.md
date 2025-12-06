@@ -30,4 +30,5 @@
 - 2025-12-06 13:25 UTC — CI skeleton added (backend/frontend test jobs + deploy placeholder) and project board conventions documented.
 - 2025-12-06 13:35 UTC — CI deploy wired to Ubuntu host (secrets-based rsync + PM2 restart) and documented setup steps.
 - 2025-12-06 13:45 UTC — Implemented self-hosted GitHub Actions runner: updated CI to runs-on [self-hosted, local] for deploy job; documented full setup (Ubuntu + Docker container options).
-- 2025-12-06 13:35 UTC — CI deploy wired to Ubuntu host (secrets-based rsync + PM2 restart) and documented setup steps.
+- 2025-12-06 14:00 UTC — Installed self-hosted runner on Ubuntu 192.168.2.31; runner active and listening for jobs.
+- 2025-12-06 14:15 UTC — Fixed CI workflow: removed invalid hashFiles conditionals, fixed test command flags (removed --runInBand for vitest compatibility), added babel-jest for backend ESM support.
