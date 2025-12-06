@@ -20,6 +20,7 @@ pnpm-debug.log*
 # Server/deployment configs with sensitive data
 server-config.md
 deployment-notes.md
+.setup-notes.md
 
 # Logs
 logs/

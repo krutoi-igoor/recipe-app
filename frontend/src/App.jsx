@@ -83,7 +83,7 @@ function App() {
     } catch (err) {
       api.clearTokens();
       setUser(null);
-      setAuthMessage(err.message || 'Session expired');
+      // Silently clear stale tokens on startup without showing error
     }
   };
 
@@ -419,11 +419,21 @@ function App() {
 
   const handleAddRecipeToCollection = async (e) => {
     e.preventDefault();
-    if (!selectedCollection) return;
+    if (!selectedCollection) {
+      setCollectionStatus('error');
+      setCollectionMessage('Select a collection first');
+      return;
+    }
+    const recipeIdNum = parseInt(selectedRecipeForCollection, 10);
+    if (!recipeIdNum) {
+      setCollectionStatus('error');
+      setCollectionMessage('Select a recipe to add');
+      return;
+    }
     setCollectionMessage('');
     setCollectionStatus('loading');
     try {
-      await api.collections.addRecipe(selectedCollection.id, { recipeId: parseInt(selectedRecipeForCollection) });
+      await api.collections.addRecipe(selectedCollection.id, { recipeId: recipeIdNum });
       setSelectedRecipeForCollection('');
       setShowAddRecipeToCollectionForm(false);
       setCollectionStatus('success');

@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 export const createCollection = async (req, res) => {
   try {
     const { name } = req.validatedData;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const createdCollection = await prisma.collection.create({
       data: {
@@ -22,7 +22,7 @@ export const createCollection = async (req, res) => {
 
 export const getCollections = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const collections = await prisma.collection.findMany({
       where: { userId },
@@ -45,7 +45,7 @@ export const addRecipeToCollection = async (req, res) => {
   try {
     const { collectionId } = req.params;
     const { recipeId } = req.validatedData;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const collection = await prisma.collection.findUnique({
       where: { id: parseInt(collectionId) },
@@ -77,7 +77,7 @@ export const addRecipeToCollection = async (req, res) => {
 export const removeRecipeFromCollection = async (req, res) => {
   try {
     const { collectionId, recipeId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const collection = await prisma.collection.findUnique({
       where: { id: parseInt(collectionId) },
@@ -105,7 +105,7 @@ export const removeRecipeFromCollection = async (req, res) => {
 export const deleteCollection = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const collection = await prisma.collection.findUnique({
       where: { id: parseInt(id) },

@@ -33,6 +33,9 @@ Main differentiator: **paste a social/video URL and get a clean, structured reci
 - `uploads/` – user-uploaded images (local/dev)
 - `scripts/` – helper scripts
 - `docs/` – planning artifacts (API spec, design system, architecture, testing, hosting)
+- `project-status/` – Phase 1 (`phase-1/`) and Phase 2 (`phase-2/`) status/test/summary docs
+- `test-scripts/` – API smoke/flow scripts (`test-api.sh`, `test-simple.sh`)
+- `dev-log/` – chronological development log (for story/blog)
 
 ## Quick Start (local, dev)
 1) Copy `.env.example` → `.env` and fill secrets.  

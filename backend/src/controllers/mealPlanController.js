@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 export const createMealPlan = async (req, res) => {
   try {
     const { date, recipeId, notes } = req.validatedData;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const mealPlan = await prisma.mealPlan.create({
       data: {
@@ -25,7 +25,7 @@ export const createMealPlan = async (req, res) => {
 
 export const getMealPlans = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const { startDate, endDate } = req.query;
 
     const where = { userId };
@@ -51,7 +51,7 @@ export const getMealPlans = async (req, res) => {
 export const getMealPlan = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const mealPlan = await prisma.mealPlan.findUnique({
       where: { id: parseInt(id) },
@@ -71,7 +71,7 @@ export const getMealPlan = async (req, res) => {
 export const updateMealPlan = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const { date, recipeId, notes } = req.validatedData;
 
     const mealPlan = await prisma.mealPlan.findUnique({
@@ -101,7 +101,7 @@ export const updateMealPlan = async (req, res) => {
 export const deleteMealPlan = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const mealPlan = await prisma.mealPlan.findUnique({
       where: { id: parseInt(id) },
@@ -124,7 +124,7 @@ export const deleteMealPlan = async (req, res) => {
 // Shopping list aggregation
 export const getShoppingList = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const { startDate, endDate } = req.query;
 
     const where = { userId };
