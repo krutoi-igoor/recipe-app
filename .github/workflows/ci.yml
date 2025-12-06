@@ -27,7 +27,7 @@ jobs:
         working-directory: backend
 
       - name: Run tests
-        run: npm test -- --runInBand
+        run: npm test
         working-directory: backend
 
   frontend-tests:
@@ -49,7 +49,7 @@ jobs:
         working-directory: frontend
 
       - name: Run tests
-        run: npm test -- --runInBand
+        run: npm test
         working-directory: frontend
 
   deploy-to-ubuntu-host:
