@@ -143,3 +143,29 @@ export const refresh = async (req, res) => {
     res.status(401).json({ success: false, error: 'Invalid refresh token' });
   }
 };
+
+export const me = async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({ where: { id: req.user.userId } });
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    });
+  } catch (error) {
+    console.error('Me error:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+};
