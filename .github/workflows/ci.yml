@@ -111,37 +111,29 @@ jobs:
           npm run build
         working-directory: frontend
 
-      - name: Prepare SSH key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ env.DEPLOY_SSH_KEY }}
-
-      - name: Add known hosts
-        if: env.DEPLOY_KNOWN_HOSTS != ''
+      - name: Sync repository to deploy path
         run: |
-          mkdir -p ~/.ssh
-          echo "$DEPLOY_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-
-      - name: Sync repository to server
-        run: |
+          mkdir -p ${DEPLOY_PATH}
           rsync -az --delete \
             --exclude='.git' \
             --exclude='node_modules' \
-            ./ ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}
+            --exclude='_work' \
+            ./ ${DEPLOY_PATH}/
 
-      - name: Remote install/build/restart
-        env:
-          REMOTE_PATH: ${{ env.DEPLOY_PATH }}
+      - name: Install and build backend
         run: |
-          ssh ${DEPLOY_USER}@${DEPLOY_HOST} "bash -s" <<'EOF'
-          set -euo pipefail
-          cd "$REMOTE_PATH/backend"
+          cd ${DEPLOY_PATH}/backend
           npm ci --omit=dev --no-progress
           pm2 restart recipe-app || pm2 start src/server.js --name recipe-app
 
-          cd "$REMOTE_PATH/frontend"
+      - name: Install and build frontend
+        run: |
+          cd ${DEPLOY_PATH}/frontend
           npm ci --no-progress
           npm run build
-          rm -rf "$REMOTE_PATH/static"/*
-          cp -r dist/* "$REMOTE_PATH/static"/
-          EOF
+          
+      - name: Deploy static files
+        run: |
+          mkdir -p ${DEPLOY_PATH}/static
+          rm -rf ${DEPLOY_PATH}/static/*
+          cp -r ${DEPLOY_PATH}/frontend/dist/* ${DEPLOY_PATH}/static/
