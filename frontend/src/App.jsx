@@ -1107,7 +1107,7 @@ function App() {
   ), [
     isAuthed, authMode, email, username, password, authStatus, handleAuthSubmit, authMessage, user, handleLogout,
     recipeForm, setRecipeForm, ingredients, updateIngredient, addIngredient, removeIngredient,
-    handleCreateRecipe, recipeStatus, recipeMessage, recipes, renderDescription, handleDeleteRecipe, handleEditRecipe,
+    handleCreateRecipe, recipeStatus, recipeMessage, recipes, renderDescription, handleDeleteRecipe, openEditModal,
     mealPlans, currentMonth, goToPreviousMonth, goToNextMonth, renderCalendar, showMealPlanForm, setShowMealPlanForm,
     mealPlanForm, setMealPlanForm, mealPlanStatus, handleCreateMealPlan, mealPlanMessage,
     shoppingListStartDate, setShoppingListStartDate, shoppingListEndDate, setShoppingListEndDate,
