@@ -23,7 +23,7 @@ export const schemas = {
         quantity: Joi.number().required(),
         unit: Joi.string().required(),
       })
-    ).required(),
+    ).min(1).required(),
     instructions: Joi.array().items(Joi.string()).required(),
     servings: Joi.number().optional(),
     prepTime: Joi.number().optional(),

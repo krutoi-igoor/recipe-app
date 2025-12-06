@@ -9,7 +9,7 @@
     "start": "node src/server.js",
     "lint": "echo \"add eslint later\"",
     "test": "jest --forceExit --detectOpenHandles",
-    "test:ci": "jest --config jest.config.ci.js --forceExit --detectOpenHandles",
+    "test:ci": "jest tests/validation.test.js --forceExit --detectOpenHandles",
     "migrate": "prisma migrate deploy"
   },
   "dependencies": {

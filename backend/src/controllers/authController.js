@@ -169,3 +169,8 @@ export const me = async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 };
+
+// Aliases for tests
+export const registerUser = register;
+export const loginUser = login;
+export const getMe = me;
