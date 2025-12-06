@@ -6,6 +6,10 @@ export default {
     '^.+\\.js$': 'babel-jest',
   },
   testMatch: ['**/tests/**/*.test.js'],
+  testPathIgnorePatterns: [
+    'api.test.js',  // Requires database
+    'collection.test.js', // Requires database
+  ],
   collectCoverageFrom: ['src/**/*.js'],
   coveragePathIgnorePatterns: ['/node_modules/'],
 };

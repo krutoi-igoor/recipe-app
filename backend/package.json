@@ -8,7 +8,9 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "lint": "echo \"add eslint later\"",
-    "test": "jest --forceExit --detectOpenHandles"
+    "test": "jest --forceExit --detectOpenHandles",
+    "test:ci": "jest --config jest.config.ci.js --forceExit --detectOpenHandles",
+    "migrate": "prisma migrate deploy"
   },
   "dependencies": {
     "bcryptjs": "2.4.3",

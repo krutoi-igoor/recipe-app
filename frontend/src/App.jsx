@@ -1105,7 +1105,6 @@ function App() {
       )}
     </main>
   );
-  );
   const isActive = (path) => isActivePath(location.pathname, path);
 
   return (

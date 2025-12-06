@@ -1,0 +1,1040 @@
+FAIL tests/validation.test.js
+  ● Validation Schemas › registerSchema › should validate correct registration data
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      17 |         password: 'SecurePassword123!',
+      18 |       };
+    > 19 |       const { error } = registerSchema.validate(data);
+         |                                        ^
+      20 |       expect(error).toBeUndefined();
+      21 |     });
+      22 |
+
+      at Object.validate (tests/validation.test.js:19:40)
+
+  ● Validation Schemas › registerSchema › should reject invalid email
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      27 |         password: 'SecurePassword123!',
+      28 |       };
+    > 29 |       const { error } = registerSchema.validate(data);
+         |                                        ^
+      30 |       expect(error).toBeDefined();
+      31 |     });
+      32 |
+
+      at Object.validate (tests/validation.test.js:29:40)
+
+  ● Validation Schemas › registerSchema › should reject short password
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      37 |         password: 'short',
+      38 |       };
+    > 39 |       const { error } = registerSchema.validate(data);
+         |                                        ^
+      40 |       expect(error).toBeDefined();
+      41 |     });
+      42 |
+
+      at Object.validate (tests/validation.test.js:39:40)
+
+  ● Validation Schemas › registerSchema › should reject username with special chars
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      47 |         password: 'SecurePassword123!',
+      48 |       };
+    > 49 |       const { error } = registerSchema.validate(data);
+         |                                        ^
+      50 |       expect(error).toBeDefined();
+      51 |     });
+      52 |
+
+      at Object.validate (tests/validation.test.js:49:40)
+
+  ● Validation Schemas › registerSchema › should reject username < 3 chars
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      57 |         password: 'SecurePassword123!',
+      58 |       };
+    > 59 |       const { error } = registerSchema.validate(data);
+         |                                        ^
+      60 |       expect(error).toBeDefined();
+      61 |     });
+      62 |   });
+
+      at Object.validate (tests/validation.test.js:59:40)
+
+  ● Validation Schemas › loginSchema › should validate correct login data
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      68 |         password: 'Password123!',
+      69 |       };
+    > 70 |       const { error } = loginSchema.validate(data);
+         |                                     ^
+      71 |       expect(error).toBeUndefined();
+      72 |     });
+      73 |
+
+      at Object.validate (tests/validation.test.js:70:37)
+
+  ● Validation Schemas › loginSchema › should reject missing email
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      74 |     it('should reject missing email', () => {
+      75 |       const data = { password: 'Password123!' };
+    > 76 |       const { error } = loginSchema.validate(data);
+         |                                     ^
+      77 |       expect(error).toBeDefined();
+      78 |     });
+      79 |
+
+      at Object.validate (tests/validation.test.js:76:37)
+
+  ● Validation Schemas › loginSchema › should reject missing password
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      80 |     it('should reject missing password', () => {
+      81 |       const data = { email: 'test@example.com' };
+    > 82 |       const { error } = loginSchema.validate(data);
+         |                                     ^
+      83 |       expect(error).toBeDefined();
+      84 |     });
+      85 |   });
+
+      at Object.validate (tests/validation.test.js:82:37)
+
+  ● Validation Schemas › recipeSchema › should validate complete recipe
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+       96 |         instructions: ['Cook pasta', 'Mix with sauce'],
+       97 |       };
+    >  98 |       const { error } = recipeSchema.validate(data);
+          |                                      ^
+       99 |       expect(error).toBeUndefined();
+      100 |     });
+      101 |
+
+      at Object.validate (tests/validation.test.js:98:38)
+
+  ● Validation Schemas › recipeSchema › should reject missing title
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      106 |         instructions: ['Step 1'],
+      107 |       };
+    > 108 |       const { error } = recipeSchema.validate(data);
+          |                                      ^
+      109 |       expect(error).toBeDefined();
+      110 |     });
+      111 |
+
+      at Object.validate (tests/validation.test.js:108:38)
+
+  ● Validation Schemas › recipeSchema › should reject empty ingredients
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      117 |         instructions: ['Step 1'],
+      118 |       };
+    > 119 |       const { error } = recipeSchema.validate(data);
+          |                                      ^
+      120 |       expect(error).toBeDefined();
+      121 |     });
+      122 |
+
+      at Object.validate (tests/validation.test.js:119:38)
+
+  ● Validation Schemas › recipeSchema › should allow optional imageUrl
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      128 |         imageUrl: 'https://example.com/image.jpg',
+      129 |       };
+    > 130 |       const { error } = recipeSchema.validate(data);
+          |                                      ^
+      131 |       expect(error).toBeUndefined();
+      132 |     });
+      133 |   });
+
+      at Object.validate (tests/validation.test.js:130:38)
+
+  ● Validation Schemas › mealPlanSchema › should validate meal plan with recipe
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      140 |         notes: 'Family dinner',
+      141 |       };
+    > 142 |       const { error } = mealPlanSchema.validate(data);
+          |                                        ^
+      143 |       expect(error).toBeUndefined();
+      144 |     });
+      145 |
+
+      at Object.validate (tests/validation.test.js:142:40)
+
+  ● Validation Schemas › mealPlanSchema › should validate meal plan without recipe
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      149 |         notes: 'No recipe assigned',
+      150 |       };
+    > 151 |       const { error } = mealPlanSchema.validate(data);
+          |                                        ^
+      152 |       expect(error).toBeUndefined();
+      153 |     });
+      154 |
+
+      at Object.validate (tests/validation.test.js:151:40)
+
+  ● Validation Schemas › mealPlanSchema › should reject missing date
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      158 |         notes: 'Missing date',
+      159 |       };
+    > 160 |       const { error } = mealPlanSchema.validate(data);
+          |                                        ^
+      161 |       expect(error).toBeDefined();
+      162 |     });
+      163 |
+
+      at Object.validate (tests/validation.test.js:160:40)
+
+  ● Validation Schemas › mealPlanSchema › should reject non-numeric recipeId
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      167 |         recipeId: 'not-a-number',
+      168 |       };
+    > 169 |       const { error } = mealPlanSchema.validate(data);
+          |                                        ^
+      170 |       expect(error).toBeDefined();
+      171 |     });
+      172 |   });
+
+      at Object.validate (tests/validation.test.js:169:40)
+
+  ● Validation Schemas › collectionRecipeSchema › should validate recipe ID as number
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      175 |     it('should validate recipe ID as number', () => {
+      176 |       const data = { recipeId: 5 };
+    > 177 |       const { error } = collectionRecipeSchema.validate(data);
+          |                                                ^
+      178 |       expect(error).toBeUndefined();
+      179 |     });
+      180 |
+
+      at Object.validate (tests/validation.test.js:177:48)
+
+  ● Validation Schemas › collectionRecipeSchema › should reject missing recipeId
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      181 |     it('should reject missing recipeId', () => {
+      182 |       const data = {};
+    > 183 |       const { error } = collectionRecipeSchema.validate(data);
+          |                                                ^
+      184 |       expect(error).toBeDefined();
+      185 |     });
+      186 |
+
+      at Object.validate (tests/validation.test.js:183:48)
+
+  ● Validation Schemas › collectionRecipeSchema › should reject non-numeric recipeId
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      187 |     it('should reject non-numeric recipeId', () => {
+      188 |       const data = { recipeId: 'abc' };
+    > 189 |       const { error } = collectionRecipeSchema.validate(data);
+          |                                                ^
+      190 |       expect(error).toBeDefined();
+      191 |     });
+      192 |
+
+      at Object.validate (tests/validation.test.js:189:48)
+
+  ● Validation Schemas › collectionRecipeSchema › should reject negative recipeId
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      193 |     it('should reject negative recipeId', () => {
+      194 |       const data = { recipeId: -1 };
+    > 195 |       const { error } = collectionRecipeSchema.validate(data);
+          |                                                ^
+      196 |       expect(error).toBeDefined();
+      197 |     });
+      198 |   });
+
+      at Object.validate (tests/validation.test.js:195:48)
+
+  ● Validation Schemas › collectionSchema › should validate collection with name
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      201 |     it('should validate collection with name', () => {
+      202 |       const data = { name: 'Weeknight Meals' };
+    > 203 |       const { error } = collectionSchema.validate(data);
+          |                                          ^
+      204 |       expect(error).toBeUndefined();
+      205 |     });
+      206 |
+
+      at Object.validate (tests/validation.test.js:203:42)
+
+  ● Validation Schemas › collectionSchema › should reject missing name
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      207 |     it('should reject missing name', () => {
+      208 |       const data = {};
+    > 209 |       const { error } = collectionSchema.validate(data);
+          |                                          ^
+      210 |       expect(error).toBeDefined();
+      211 |     });
+      212 |
+
+      at Object.validate (tests/validation.test.js:209:42)
+
+  ● Validation Schemas › collectionSchema › should reject empty name
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      213 |     it('should reject empty name', () => {
+      214 |       const data = { name: '' };
+    > 215 |       const { error } = collectionSchema.validate(data);
+          |                                          ^
+      216 |       expect(error).toBeDefined();
+      217 |     });
+      218 |
+
+      at Object.validate (tests/validation.test.js:215:42)
+
+  ● Validation Schemas › collectionSchema › should allow names with spaces and punctuation
+
+    TypeError: Cannot read properties of undefined (reading 'validate')
+
+      219 |     it('should allow names with spaces and punctuation', () => {
+      220 |       const data = { name: 'Holiday Recipes & Favorites!' };
+    > 221 |       const { error } = collectionSchema.validate(data);
+          |                                          ^
+      222 |       expect(error).toBeUndefined();
+      223 |     });
+      224 |   });
+
+      at Object.validate (tests/validation.test.js:221:42)
+
+PASS tests/collection.test.js
+POST /api/v1/auth/register 500 31.567 ms - 49
+POST /api/v1/auth/register 500 4.255 ms - 49
+POST /api/v1/auth/register 500 1.977 ms - 49
+POST /api/v1/auth/register 500 1.915 ms - 49
+POST /api/v1/auth/login 500 2.426 ms - 49
+POST /api/v1/auth/register 500 1.972 ms - 49
+POST /api/v1/auth/login 500 2.999 ms - 49
+POST /api/v1/auth/register 500 2.030 ms - 49
+GET /api/v1/auth/me 401 0.265 ms - 52
+POST /api/v1/auth/register 500 2.426 ms - 49
+GET /api/v1/health 200 0.434 ms - 59
+FAIL tests/api.test.js
+  ● Console
+
+    console.error
+      Register error: PrismaClientInitializationError: 
+      Invalid `prisma.user.findFirst()` invocation in
+      /home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:44
+      
+        10 const { email, password, username, firstName, lastName } = req.validatedData;
+        11 
+        12 // Check if user exists
+      → 13 const existingUser = await prisma.user.findFirst(
+      error: Environment variable not found: DATABASE_URL.
+        -->  schema.prisma:6
+         | 
+       5 |   provider = "postgresql"
+       6 |   url      = env("DATABASE_URL")
+         | 
+      
+      Validation Error Count: 1
+          at si.handleRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:7117)
+          at si.handleAndLogRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:6151)
+          at si.request (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:5859)
+          at l (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:130:10025)
+          at register (/home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:26) {
+        clientVersion: '5.7.1',
+        errorCode: undefined
+      }
+
+      58 |     });
+      59 |   } catch (error) {
+    > 60 |     console.error('Register error:', error);
+         |             ^
+      61 |     res.status(500).json({ success: false, error: 'Internal server error' });
+      62 |   }
+      63 | };
+
+      at error (src/controllers/authController.js:60:13)
+
+    console.error
+      Register error: PrismaClientInitializationError: 
+      Invalid `prisma.user.findFirst()` invocation in
+      /home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:44
+      
+        10 const { email, password, username, firstName, lastName } = req.validatedData;
+        11 
+        12 // Check if user exists
+      → 13 const existingUser = await prisma.user.findFirst(
+      error: Environment variable not found: DATABASE_URL.
+        -->  schema.prisma:6
+         | 
+       5 |   provider = "postgresql"
+       6 |   url      = env("DATABASE_URL")
+         | 
+      
+      Validation Error Count: 1
+          at si.handleRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:7117)
+          at si.handleAndLogRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:6151)
+          at si.request (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:5859)
+          at l (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:130:10025)
+          at register (/home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:26) {
+        clientVersion: '5.7.1',
+        errorCode: undefined
+      }
+
+      58 |     });
+      59 |   } catch (error) {
+    > 60 |     console.error('Register error:', error);
+         |             ^
+      61 |     res.status(500).json({ success: false, error: 'Internal server error' });
+      62 |   }
+      63 | };
+
+      at error (src/controllers/authController.js:60:13)
+
+    console.error
+      Register error: PrismaClientInitializationError: 
+      Invalid `prisma.user.findFirst()` invocation in
+      /home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:44
+      
+        10 const { email, password, username, firstName, lastName } = req.validatedData;
+        11 
+        12 // Check if user exists
+      → 13 const existingUser = await prisma.user.findFirst(
+      error: Environment variable not found: DATABASE_URL.
+        -->  schema.prisma:6
+         | 
+       5 |   provider = "postgresql"
+       6 |   url      = env("DATABASE_URL")
+         | 
+      
+      Validation Error Count: 1
+          at si.handleRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:7117)
+          at si.handleAndLogRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:6151)
+          at si.request (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:5859)
+          at l (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:130:10025)
+          at register (/home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:26) {
+        clientVersion: '5.7.1',
+        errorCode: undefined
+      }
+
+      58 |     });
+      59 |   } catch (error) {
+    > 60 |     console.error('Register error:', error);
+         |             ^
+      61 |     res.status(500).json({ success: false, error: 'Internal server error' });
+      62 |   }
+      63 | };
+
+      at error (src/controllers/authController.js:60:13)
+
+    console.error
+      Register error: PrismaClientInitializationError: 
+      Invalid `prisma.user.findFirst()` invocation in
+      /home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:44
+      
+        10 const { email, password, username, firstName, lastName } = req.validatedData;
+        11 
+        12 // Check if user exists
+      → 13 const existingUser = await prisma.user.findFirst(
+      error: Environment variable not found: DATABASE_URL.
+        -->  schema.prisma:6
+         | 
+       5 |   provider = "postgresql"
+       6 |   url      = env("DATABASE_URL")
+         | 
+      
+      Validation Error Count: 1
+          at si.handleRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:7117)
+          at si.handleAndLogRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:6151)
+          at si.request (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:5859)
+          at l (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:130:10025)
+          at register (/home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:26) {
+        clientVersion: '5.7.1',
+        errorCode: undefined
+      }
+
+      58 |     });
+      59 |   } catch (error) {
+    > 60 |     console.error('Register error:', error);
+         |             ^
+      61 |     res.status(500).json({ success: false, error: 'Internal server error' });
+      62 |   }
+      63 | };
+
+      at error (src/controllers/authController.js:60:13)
+
+    console.error
+      Login error: PrismaClientInitializationError: 
+      Invalid `prisma.user.findUnique()` invocation in
+      /home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:70:36
+      
+        67 const { email, password } = req.validatedData;
+        68 
+        69 // Find user
+      → 70 const user = await prisma.user.findUnique(
+      error: Environment variable not found: DATABASE_URL.
+        -->  schema.prisma:6
+         | 
+       5 |   provider = "postgresql"
+       6 |   url      = env("DATABASE_URL")
+         | 
+      
+      Validation Error Count: 1
+          at si.handleRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:7117)
+          at si.handleAndLogRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:6151)
+          at si.request (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:5859)
+          at l (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:130:10025)
+          at login (/home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:70:18) {
+        clientVersion: '5.7.1',
+        errorCode: undefined
+      }
+
+      109 |     });
+      110 |   } catch (error) {
+    > 111 |     console.error('Login error:', error);
+          |             ^
+      112 |     res.status(500).json({ success: false, error: 'Internal server error' });
+      113 |   }
+      114 | };
+
+      at error (src/controllers/authController.js:111:13)
+
+    console.error
+      Register error: PrismaClientInitializationError: 
+      Invalid `prisma.user.findFirst()` invocation in
+      /home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:44
+      
+        10 const { email, password, username, firstName, lastName } = req.validatedData;
+        11 
+        12 // Check if user exists
+      → 13 const existingUser = await prisma.user.findFirst(
+      error: Environment variable not found: DATABASE_URL.
+        -->  schema.prisma:6
+         | 
+       5 |   provider = "postgresql"
+       6 |   url      = env("DATABASE_URL")
+         | 
+      
+      Validation Error Count: 1
+          at si.handleRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:7117)
+          at si.handleAndLogRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:6151)
+          at si.request (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:5859)
+          at l (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:130:10025)
+          at register (/home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:26) {
+        clientVersion: '5.7.1',
+        errorCode: undefined
+      }
+
+      58 |     });
+      59 |   } catch (error) {
+    > 60 |     console.error('Register error:', error);
+         |             ^
+      61 |     res.status(500).json({ success: false, error: 'Internal server error' });
+      62 |   }
+      63 | };
+
+      at error (src/controllers/authController.js:60:13)
+
+    console.error
+      Login error: PrismaClientInitializationError: 
+      Invalid `prisma.user.findUnique()` invocation in
+      /home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:70:36
+      
+        67 const { email, password } = req.validatedData;
+        68 
+        69 // Find user
+      → 70 const user = await prisma.user.findUnique(
+      error: Environment variable not found: DATABASE_URL.
+        -->  schema.prisma:6
+         | 
+       5 |   provider = "postgresql"
+       6 |   url      = env("DATABASE_URL")
+         | 
+      
+      Validation Error Count: 1
+          at si.handleRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:7117)
+          at si.handleAndLogRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:6151)
+          at si.request (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:5859)
+          at l (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:130:10025)
+          at login (/home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:70:18) {
+        clientVersion: '5.7.1',
+        errorCode: undefined
+      }
+
+      109 |     });
+      110 |   } catch (error) {
+    > 111 |     console.error('Login error:', error);
+          |             ^
+      112 |     res.status(500).json({ success: false, error: 'Internal server error' });
+      113 |   }
+      114 | };
+
+      at error (src/controllers/authController.js:111:13)
+
+    console.error
+      Register error: PrismaClientInitializationError: 
+      Invalid `prisma.user.findFirst()` invocation in
+      /home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:44
+      
+        10 const { email, password, username, firstName, lastName } = req.validatedData;
+        11 
+        12 // Check if user exists
+      → 13 const existingUser = await prisma.user.findFirst(
+      error: Environment variable not found: DATABASE_URL.
+        -->  schema.prisma:6
+         | 
+       5 |   provider = "postgresql"
+       6 |   url      = env("DATABASE_URL")
+         | 
+      
+      Validation Error Count: 1
+          at si.handleRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:7117)
+          at si.handleAndLogRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:6151)
+          at si.request (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:5859)
+          at l (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:130:10025)
+          at register (/home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:26) {
+        clientVersion: '5.7.1',
+        errorCode: undefined
+      }
+
+      58 |     });
+      59 |   } catch (error) {
+    > 60 |     console.error('Register error:', error);
+         |             ^
+      61 |     res.status(500).json({ success: false, error: 'Internal server error' });
+      62 |   }
+      63 | };
+
+      at error (src/controllers/authController.js:60:13)
+
+    console.error
+      Register error: PrismaClientInitializationError: 
+      Invalid `prisma.user.findFirst()` invocation in
+      /home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:44
+      
+        10 const { email, password, username, firstName, lastName } = req.validatedData;
+        11 
+        12 // Check if user exists
+      → 13 const existingUser = await prisma.user.findFirst(
+      error: Environment variable not found: DATABASE_URL.
+        -->  schema.prisma:6
+         | 
+       5 |   provider = "postgresql"
+       6 |   url      = env("DATABASE_URL")
+         | 
+      
+      Validation Error Count: 1
+          at si.handleRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:7117)
+          at si.handleAndLogRequestError (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:6151)
+          at si.request (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:125:5859)
+          at l (/home/runner/work/recipe-app/recipe-app/backend/node_modules/@prisma/client/runtime/library.js:130:10025)
+          at register (/home/runner/work/recipe-app/recipe-app/backend/src/controllers/authController.js:13:26) {
+        clientVersion: '5.7.1',
+        errorCode: undefined
+      }
+
+      58 |     });
+      59 |   } catch (error) {
+    > 60 |     console.error('Register error:', error);
+         |             ^
+      61 |     res.status(500).json({ success: false, error: 'Internal server error' });
+      62 |   }
+      63 | };
+
+      at error (src/controllers/authController.js:60:13)
+
+  ● Auth API › POST /auth/register – should create user and return tokens
+
+    expected 201 "Created", got 500 "Internal Server Error"
+
+      11 |       .post('/api/v1/auth/register')
+      12 |       .send(testUser)
+    > 13 |       .expect(201);
+         |        ^
+      14 |
+      15 |     expect(res.body.success).toBe(true);
+      16 |     expect(res.body.data.user.email).toBe(testUser.email);
+
+      at Object.expect (tests/api.test.js:13:8)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+  ● Auth API › POST /auth/register – should reject duplicate email
+
+    expected 409 "Conflict", got 500 "Internal Server Error"
+
+      25 |       .post('/api/v1/auth/register')
+      26 |       .send(testUser)
+    > 27 |       .expect(409);
+         |        ^
+      28 |
+      29 |     expect(res.body.success).toBe(false);
+      30 |   });
+
+      at Object.expect (tests/api.test.js:27:8)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+  ● Auth API › POST /auth/login – should return tokens on valid credentials
+
+    expected 200 "OK", got 500 "Internal Server Error"
+
+      36 |       .post('/api/v1/auth/login')
+      37 |       .send({ email: testUser.email, password: testUser.password })
+    > 38 |       .expect(200);
+         |        ^
+      39 |
+      40 |     expect(res.body.success).toBe(true);
+      41 |     expect(res.body.data.token).toBeDefined();
+
+      at Object.expect (tests/api.test.js:38:8)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+  ● Auth API › POST /auth/login – should reject invalid password
+
+    expected 401 "Unauthorized", got 500 "Internal Server Error"
+
+      49 |       .post('/api/v1/auth/login')
+      50 |       .send({ email: testUser.email, password: 'wrongpassword' })
+    > 51 |       .expect(401);
+         |        ^
+      52 |
+      53 |     expect(res.body.success).toBe(false);
+      54 |   });
+
+      at Object.expect (tests/api.test.js:51:8)
+      ----
+      at Test._assertStatus (node_modules/supertest/lib/test.js:252:14)
+      at node_modules/supertest/lib/test.js:308:13
+      at Test._assertFunction (node_modules/supertest/lib/test.js:285:13)
+      at Test.assert (node_modules/supertest/lib/test.js:164:23)
+      at Server.localAssert (node_modules/supertest/lib/test.js:120:14)
+
+  ● Auth API › GET /auth/me – should return user data with valid token
+
+    TypeError: Cannot read properties of undefined (reading 'token')
+
+      56 |   it('GET /auth/me – should return user data with valid token', async () => {
+      57 |     const registerRes = await req.post('/api/v1/auth/register').send(testUser);
+    > 58 |     const token = registerRes.body.data.token;
+         |                                         ^
+      59 |
+      60 |     const res = await req
+      61 |       .get('/api/v1/auth/me')
+
+      at Object.token (tests/api.test.js:58:41)
+
+  ● Recipe API › POST /recipes – should create recipe with valid auth
+
+    TypeError: Cannot read properties of undefined (reading 'token')
+
+      86 |       .post('/api/v1/auth/register')
+      87 |       .send(testUser);
+    > 88 |     userToken = res.body.data.token;
+         |                               ^
+      89 |   });
+      90 |
+      91 |   it('POST /recipes – should create recipe with valid auth', async () => {
+
+      at Object.token (tests/api.test.js:88:31)
+
+  ● Recipe API › GET /recipes – should list user recipes
+
+    TypeError: Cannot read properties of undefined (reading 'token')
+
+      86 |       .post('/api/v1/auth/register')
+      87 |       .send(testUser);
+    > 88 |     userToken = res.body.data.token;
+         |                               ^
+      89 |   });
+      90 |
+      91 |   it('POST /recipes – should create recipe with valid auth', async () => {
+
+      at Object.token (tests/api.test.js:88:31)
+
+  ● Recipe API › POST /recipes – should reject without auth
+
+    TypeError: Cannot read properties of undefined (reading 'token')
+
+      86 |       .post('/api/v1/auth/register')
+      87 |       .send(testUser);
+    > 88 |     userToken = res.body.data.token;
+         |                               ^
+      89 |   });
+      90 |
+      91 |   it('POST /recipes – should create recipe with valid auth', async () => {
+
+      at Object.token (tests/api.test.js:88:31)
+
+PASS tests/mealplan.test.js
+PASS tests/recipe.test.js
+FAIL tests/auth.test.js
+  ● Auth Controller › registerUser › should register a new user with valid credentials
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+      33 |       // Note: Full integration test would require actual database
+      34 |       // This demonstrates test structure
+    > 35 |       expect(registerUser).toBeDefined();
+         |                            ^
+      36 |     });
+      37 |
+      38 |     it('should reject invalid email', async () => {
+
+      at Object.toBeDefined (tests/auth.test.js:35:28)
+
+  ● Auth Controller › registerUser › should reject invalid email
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+      43 |       };
+      44 |
+    > 45 |       expect(registerUser).toBeDefined();
+         |                            ^
+      46 |     });
+      47 |
+      48 |     it('should reject short password', async () => {
+
+      at Object.toBeDefined (tests/auth.test.js:45:28)
+
+  ● Auth Controller › registerUser › should reject short password
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+      53 |       };
+      54 |
+    > 55 |       expect(registerUser).toBeDefined();
+         |                            ^
+      56 |     });
+      57 |   });
+      58 |
+
+      at Object.toBeDefined (tests/auth.test.js:55:28)
+
+  ● Auth Controller › loginUser › should login user with valid credentials
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+      64 |       };
+      65 |
+    > 66 |       expect(loginUser).toBeDefined();
+         |                         ^
+      67 |     });
+      68 |
+      69 |     it('should reject invalid email', async () => {
+
+      at Object.toBeDefined (tests/auth.test.js:66:25)
+
+  ● Auth Controller › loginUser › should reject invalid email
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+      73 |       };
+      74 |
+    > 75 |       expect(loginUser).toBeDefined();
+         |                         ^
+      76 |     });
+      77 |   });
+      78 |
+
+      at Object.toBeDefined (tests/auth.test.js:75:25)
+
+  ● Auth Controller › getMe › should return authenticated user data
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+      84 |       };
+      85 |
+    > 86 |       expect(getMe).toBeDefined();
+         |                     ^
+      87 |     });
+      88 |   });
+      89 | });
+
+      at Object.toBeDefined (tests/auth.test.js:86:21)
+
+FAIL tests/middleware.test.js
+  ● Auth Middleware › verifyToken › should reject missing authorization header
+
+    TypeError: (0 , _auth.verifyToken) is not a function
+
+      19 |   describe('verifyToken', () => {
+      20 |     it('should reject missing authorization header', () => {
+    > 21 |       verifyToken(req, res, next);
+         |                  ^
+      22 |       expect(res.status).toHaveBeenCalledWith(401);
+      23 |     });
+      24 |
+
+      at Object.<anonymous> (tests/middleware.test.js:21:18)
+
+  ● Auth Middleware › verifyToken › should reject malformed authorization header
+
+    TypeError: (0 , _auth.verifyToken) is not a function
+
+      25 |     it('should reject malformed authorization header', () => {
+      26 |       req.headers.authorization = 'InvalidFormat token';
+    > 27 |       verifyToken(req, res, next);
+         |                  ^
+      28 |       expect(res.status).toHaveBeenCalledWith(401);
+      29 |     });
+      30 |
+
+      at Object.<anonymous> (tests/middleware.test.js:27:18)
+
+  ● Auth Middleware › verifyToken › should reject invalid token
+
+    TypeError: (0 , _auth.verifyToken) is not a function
+
+      31 |     it('should reject invalid token', () => {
+      32 |       req.headers.authorization = '***';
+    > 33 |       verifyToken(req, res, next);
+         |                  ^
+      34 |       expect(res.status).toHaveBeenCalledWith(401);
+      35 |     });
+      36 |
+
+      at Object.<anonymous> (tests/middleware.test.js:33:18)
+
+  ● Auth Middleware › verifyToken › should call next() with valid token
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+      38 |       // This would require a valid JWT in production
+      39 |       // For testing, mock the verification
+    > 40 |       expect(verifyToken).toBeDefined();
+         |                           ^
+      41 |     });
+      42 |
+      43 |     it('should set req.user from decoded token', () => {
+
+      at Object.toBeDefined (tests/middleware.test.js:40:27)
+
+  ● Auth Middleware › verifyToken › should set req.user from decoded token
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+      43 |     it('should set req.user from decoded token', () => {
+      44 |       // Should extract userId and email from JWT payload
+    > 45 |       expect(verifyToken).toBeDefined();
+         |                           ^
+      46 |     });
+      47 |   });
+      48 |
+
+      at Object.toBeDefined (tests/middleware.test.js:45:27)
+
+  ● Auth Middleware › refreshAccessToken › should return new access token with valid refresh token
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+      49 |   describe('refreshAccessToken', () => {
+      50 |     it('should return new access token with valid refresh token', () => {
+    > 51 |       expect(refreshAccessToken).toBeDefined();
+         |                                  ^
+      52 |     });
+      53 |
+      54 |     it('should reject expired refresh token', () => {
+
+      at Object.toBeDefined (tests/middleware.test.js:51:34)
+
+  ● Auth Middleware › refreshAccessToken › should reject expired refresh token
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+      53 |
+      54 |     it('should reject expired refresh token', () => {
+    > 55 |       expect(refreshAccessToken).toBeDefined();
+         |                                  ^
+      56 |     });
+      57 |
+      58 |     it('should reject missing refresh token', () => {
+
+      at Object.toBeDefined (tests/middleware.test.js:55:34)
+
+  ● Auth Middleware › refreshAccessToken › should reject missing refresh token
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+      58 |     it('should reject missing refresh token', () => {
+      59 |       req.body = {};
+    > 60 |       expect(refreshAccessToken).toBeDefined();
+         |                                  ^
+      61 |     });
+      62 |   });
+      63 | });
+
+      at Object.toBeDefined (tests/middleware.test.js:60:34)
+
+Test Suites: 4 failed, 3 passed, 7 total
+Tests:       46 failed, 42 passed, 88 total
+Snapshots:   0 total
+Time:        2.067 s
+Ran all test suites.
+Error: Process completed with exit code 1.

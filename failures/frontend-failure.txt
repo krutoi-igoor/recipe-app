@@ -1,0 +1,32 @@
+Run npm test
+
+> recipe-app-frontend@0.1.0 test
+> vitest
+
+
+ RUN  v1.6.1 /home/runner/work/recipe-app/recipe-app/frontend
+
+ ❯ src/App.test.jsx  (0 test)
+ ❯ src/__tests__/app.test.jsx  (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.test.jsx [ src/App.test.jsx ]
+ FAIL  src/__tests__/app.test.jsx [ src/__tests__/app.test.jsx ]
+Error: Transform failed with 1 error:
+/home/runner/work/recipe-app/recipe-app/frontend/src/App.jsx:1108:2: ERROR: Unexpected ")"
+ ❯ failureErrorWithLog node_modules/esbuild/lib/main.js:1472:15
+ ❯ node_modules/esbuild/lib/main.js:755:50
+ ❯ responseCallbacks.<computed> node_modules/esbuild/lib/main.js:622:9
+ ❯ handleIncomingPacket node_modules/esbuild/lib/main.js:677:12
+ ❯ Socket.readFromStdout node_modules/esbuild/lib/main.js:600:7
+ ❯ Socket.emit node:events:524:28
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ Test Files  2 failed (2)
+      Tests  no tests
+   Start at  18:36:21
+   Duration  1.01s (transform 105ms, setup 132ms, collect 0ms, tests 0ms, environment 813ms, prepare 216ms)
+
+Error: Process completed with exit code 1.
