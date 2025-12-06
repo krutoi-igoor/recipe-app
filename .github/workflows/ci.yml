@@ -124,6 +124,13 @@ jobs:
         run: |
           cd ${DEPLOY_PATH}/backend
           npm ci --omit=dev --no-progress
+          
+          # Check if PM2 is installed, if not install it
+          if ! command -v pm2 &> /dev/null; then
+            npm install -g pm2
+          fi
+          
+          # Restart or start the app with PM2
           pm2 restart recipe-app || pm2 start src/server.js --name recipe-app
 
       - name: Install and build frontend
