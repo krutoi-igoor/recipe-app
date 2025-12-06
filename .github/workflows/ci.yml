@@ -130,8 +130,13 @@ jobs:
             npm install -g pm2
           fi
           
-          # Restart or start the app with PM2
-          pm2 restart recipe-app || pm2 start src/server.js --name recipe-app
+          # Delete existing PM2 process if it exists, then start fresh
+          pm2 delete recipe-app || true
+          pm2 start src/server.js --name recipe-app --cwd ${DEPLOY_PATH}/backend
+          pm2 save
+          
+          # Ensure PM2 resurrects on reboot
+          pm2 startup systemd -u ${DEPLOY_USER} --hp /home/${DEPLOY_USER} || true
 
       - name: Install and build frontend
         run: |

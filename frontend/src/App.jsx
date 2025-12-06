@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Link, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { api } from './api/client.js';
 import './styles.css';
@@ -238,7 +238,7 @@ function App() {
     setAuthMode('login');
   };
 
-  const renderDescription = (text) => {
+  const renderDescription = useCallback((text) => {
     if (!text) return null;
     return text
       .split(/\n+/)
@@ -247,17 +247,17 @@ function App() {
       .map((p, idx) => (
         <p key={idx} style={{ margin: '0 0 0.25rem', color: '#444' }}>{p}</p>
       ));
-  };
+  }, []);
 
-  const updateIngredient = (index, key, value) => {
+  const updateIngredient = useCallback((index, key, value) => {
     setIngredients((prev) => prev.map((ing, i) => (i === index ? { ...ing, [key]: value } : ing)));
-  };
+  }, []);
 
-  const addIngredient = () => setIngredients((prev) => [...prev, { ...emptyIngredient }]);
+  const addIngredient = useCallback(() => setIngredients((prev) => [...prev, { ...emptyIngredient }]), []);
 
-  const removeIngredient = (index) => {
+  const removeIngredient = useCallback((index) => {
     setIngredients((prev) => (prev.length === 1 ? prev : prev.filter((_, i) => i !== index)));
-  };
+  }, []);
 
   const openEditModal = (recipe) => {
     setEditingRecipe(recipe);
@@ -567,7 +567,7 @@ function App() {
     ));
   };
 
-  const Dashboard = () => (
+  const Dashboard = useMemo(() => (
     <main style={{ fontFamily: 'Segoe UI, sans-serif', padding: '2rem', maxWidth: 960, margin: '0 auto', lineHeight: 1.5 }}>
       <section style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: '1fr 1.2fr', alignItems: 'start' }}>
         <div style={{ border: '1px solid #ddd', borderRadius: 8, padding: '1rem' }}>
@@ -1104,7 +1104,20 @@ function App() {
         </div>
       )}
     </main>
-  );
+  ), [
+    isAuthed, authMode, email, username, password, authStatus, handleAuthSubmit, authMessage, user, handleLogout,
+    recipeForm, setRecipeForm, ingredients, updateIngredient, addIngredient, removeIngredient,
+    handleCreateRecipe, recipeStatus, recipeMessage, recipes, renderDescription, handleDeleteRecipe, handleEditRecipe,
+    mealPlans, currentMonth, goToPreviousMonth, goToNextMonth, renderCalendar, showMealPlanForm, setShowMealPlanForm,
+    mealPlanForm, setMealPlanForm, mealPlanStatus, handleCreateMealPlan, mealPlanMessage,
+    shoppingListStartDate, setShoppingListStartDate, shoppingListEndDate, setShoppingListEndDate,
+    handleGenerateShoppingList, shoppingList, handleExportShoppingList, collections, showNewCollectionForm,
+    setShowNewCollectionForm, newCollectionName, setNewCollectionName, handleCreateCollection,
+    collectionStatus, collectionMessage, selectedCollection, setSelectedCollection,
+    showAddRecipeToCollectionForm, setShowAddRecipeToCollectionForm, selectedRecipeForCollection,
+    setSelectedRecipeForCollection, handleAddRecipeToCollection, handleRemoveRecipeFromCollection, handleDeleteCollection
+  ]);
+  
   const isActive = (path) => isActivePath(location.pathname, path);
 
   return (
@@ -1137,7 +1150,7 @@ function App() {
       <main className="content">
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/app" element={<Dashboard />} />
+          <Route path="/app" element={Dashboard} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
