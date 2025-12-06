@@ -29,3 +29,5 @@
 - 2025-12-06 13:15 UTC — Phase 1 close-out: marked database server setup, CI/CD pipeline basics, and project board as complete in roadmap/docs.
 - 2025-12-06 13:25 UTC — CI skeleton added (backend/frontend test jobs + deploy placeholder) and project board conventions documented.
 - 2025-12-06 13:35 UTC — CI deploy wired to Ubuntu host (secrets-based rsync + PM2 restart) and documented setup steps.
+- 2025-12-06 13:45 UTC — Implemented self-hosted GitHub Actions runner: updated CI to runs-on [self-hosted, local] for deploy job; documented full setup (Ubuntu + Docker container options).
+- 2025-12-06 13:35 UTC — CI deploy wired to Ubuntu host (secrets-based rsync + PM2 restart) and documented setup steps.
