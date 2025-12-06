@@ -54,12 +54,12 @@ Development of a web-based recipe management application inspired by RecipeOne, 
 - API documentation (Swagger/OpenAPI)
 
 ### Deliverables
-- [ ] User authentication system
-- [ ] Core recipe API endpoints
-- [ ] Database migrations
-- [ ] API documentation
-- [ ] Unit tests for backend logic
-- [ ] Basic deployment to Ubuntu server
+- [x] User authentication system
+- [x] Core recipe API endpoints
+- [x] Database migrations
+- [x] API documentation
+- [x] Unit tests for backend logic
+- [ ] Basic deployment to Ubuntu server (pending)
 
 ### Success Criteria
 - Users can register and authenticate
@@ -89,13 +89,13 @@ Development of a web-based recipe management application inspired by RecipeOne, 
 - Basic navigation and routing
 
 ### Deliverables
-- [ ] UI component library
-- [ ] Authentication pages
-- [ ] Recipe management interface
-- [ ] Responsive CSS framework implementation
-- [ ] Frontend routing setup
-- [ ] API integration layer
-- [ ] Frontend unit tests
+- [x] UI component library (Button, Card, Section, Input)
+- [x] Authentication pages (login/register in App)
+- [x] Recipe management interface (list/create/edit/delete)
+- [x] Responsive CSS framework implementation (base styles, grid)
+- [x] Frontend routing setup (landing + /app)
+- [x] API integration layer (api client with auth/refresh)
+- [x] Frontend unit tests (Vitest + RTL basic suites)
 
 ### Success Criteria
 - Users can sign up and log in through UI

@@ -24,3 +24,5 @@
 - 2025-12-06 11:00 UTC — Documentation re-org: moved Phase 2 docs into `project-status/`; added Phase 1 status doc; centralized test scripts into `test-scripts/`.
 - 2025-12-06 11:20 UTC — Frontend guards for adding recipe to collection (enforce collection + recipe selection; clearer error messaging).
 - 2025-12-06 12:05 UTC — Restructured `project-status/` into `phase-1/` and `phase-2/` subdirectories; updated README to point to new doc locations.
+- 2025-12-06 12:30 UTC — Added comprehensive unit test suite: auth, recipe, meal plan, collection, validation, and middleware tests (5 test files, 50+ test cases, ~50% coverage target).
+- 2025-12-06 13:00 UTC — Phase 3 foundations: added landing page + routing, UI component primitives, responsive base styles, and frontend Vitest/RTL smoke tests.

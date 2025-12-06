@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { api } from './api/client.js';
+import './styles.css';
+import Button from './ui/Button.jsx';
+import Card from './ui/Card.jsx';
+import Section from './ui/Section.jsx';
 
 const initialRecipe = { title: '', description: '', instructions: '' };
 const emptyIngredient = { name: '', quantity: '', unit: '' };
@@ -11,6 +16,43 @@ const extractTokens = (payload) => {
     refreshToken: data?.refreshToken,
   };
 };
+
+const Landing = () => (
+  <div className="container">
+    <div className="landing-hero">
+      <div>
+        <div className="chip" style={{ marginBottom: '0.75rem' }}>Phase 3</div>
+        <h1 style={{ margin: '0 0 0.5rem' }}>Recipe App</h1>
+        <p style={{ color: '#5c6475', maxWidth: 520 }}>
+          Paste a social/video link and get a clean, structured recipe with ingredients, steps, and timing. Plan meals, generate shopping lists, and organize collections.
+        </p>
+        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', flexWrap: 'wrap' }}>
+          <Link to="/app"><Button variant="primary">Open App</Button></Link>
+          <a className="btn btn-ghost" href="#features">See features</a>
+        </div>
+      </div>
+      <Card title="What you can do">
+        <ul style={{ paddingLeft: '1rem', margin: 0, color: '#1f2532' }}>
+          <li>Register / login and manage recipes</li>
+          <li>Plan meals on a calendar</li>
+          <li>Generate and export shopping lists</li>
+          <li>Organize recipes into collections</li>
+        </ul>
+      </Card>
+    </div>
+
+    <Section id="features" title="Core features" kicker="Built" className="section">
+      <div className="grid-2">
+        <Card title="Meal planning" className="card">Calendar with date click, month nav, and entry removal.</Card>
+        <Card title="Shopping lists" className="card">Aggregated ingredients by name+unit with CSV/JSON export.</Card>
+        <Card title="Collections" className="card">Create collections, add/remove recipes, cascade deletes.</Card>
+        <Card title="Auth + Recipes" className="card">JWT auth, recipe CRUD with edit/delete modals.</Card>
+      </div>
+    </Section>
+  </div>
+);
+
+const isActivePath = (pathname, current) => pathname === current;
 
 function App() {
   const [health, setHealth] = useState('checking...');
@@ -55,6 +97,8 @@ function App() {
   const [selectedRecipeForCollection, setSelectedRecipeForCollection] = useState('');
 
   const isAuthed = useMemo(() => Boolean(user), [user]);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const init = async () => {
@@ -136,6 +180,7 @@ function App() {
       setAuthStatus('success');
       setPassword('');
       setUsername('');
+      navigate('/app', { replace: true });
     } catch (err) {
       setAuthStatus('error');
       setAuthMessage(err.message || 'Auth failed');
@@ -522,19 +567,8 @@ function App() {
     ));
   };
 
-  return (
+  const Dashboard = () => (
     <main style={{ fontFamily: 'Segoe UI, sans-serif', padding: '2rem', maxWidth: 960, margin: '0 auto', lineHeight: 1.5 }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <div>
-          <h1 style={{ margin: 0 }}>Recipe App</h1>
-          <p style={{ margin: 0, color: '#444' }}>Auth + recipes wired to backend</p>
-        </div>
-        <div style={{ textAlign: 'right' }}>
-          <div><strong>API</strong>: {health}</div>
-          {isAuthed && <div style={{ fontSize: '0.9rem' }}>Signed in as {user?.email || 'user'}</div>}
-        </div>
-      </header>
-
       <section style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: '1fr 1.2fr', alignItems: 'start' }}>
         <div style={{ border: '1px solid #ddd', borderRadius: 8, padding: '1rem' }}>
           {!isAuthed && (
@@ -1070,6 +1104,45 @@ function App() {
         </div>
       )}
     </main>
+  );
+  );
+  const isActive = (path) => isActivePath(location.pathname, path);
+
+  return (
+    <div className="page">
+      <header className="topbar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <span className="chip">Beta</span>
+          <strong>Recipe App</strong>
+          <span style={{ color: '#5c6475', fontSize: '0.95rem' }}>API: {health}</span>
+        </div>
+        <nav>
+          <Link className={`nav-link ${isActive('/') ? 'active' : ''}`} to="/">Home</Link>
+          <Link className={`nav-link ${location.pathname.startsWith('/app') ? 'active' : ''}`} to="/app">App</Link>
+          {isAuthed ? (
+            <Button
+              variant="ghost"
+              onClick={() => {
+                handleLogout();
+                navigate('/');
+              }}
+            >
+              Logout
+            </Button>
+          ) : (
+            <Link className="nav-link" to="/app">Sign in</Link>
+          )}
+        </nav>
+      </header>
+
+      <main className="content">
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/app" element={<Dashboard />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+    </div>
   );
 }
 
