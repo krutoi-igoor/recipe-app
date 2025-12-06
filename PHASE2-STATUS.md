@@ -10,18 +10,18 @@
 
 ### 🎯 Features Delivered
 
-| Feature | Backend | Frontend | Tests | Status |
-|---------|---------|----------|-------|--------|
-| Recipe Edit UI | ✅ PUT endpoint | ✅ Modal form | 📋 | Complete |
-| Recipe Delete UI | ✅ DELETE endpoint | ✅ Confirmation | 📋 | Complete |
-| Meal Planning Calendar | ✅ CRUD endpoints | ✅ Month view | 📋 | Complete |
-| Meal Plan Form | ✅ Validation | ✅ Date/recipe picker | 📋 | Complete |
-| Shopping List | ✅ Aggregation logic | ✅ Table display | 📋 | Complete |
-| Shopping List Export | ✅ Query endpoint | ✅ CSV/JSON download | 📋 | Complete |
-| Collections CRUD | ✅ All endpoints | ✅ UI manager | 📋 | Complete |
-| Add/Remove Recipes | ✅ Route + logic | ✅ Forms | 📋 | Complete |
-| Database Models | ✅ 3 tables created | N/A | 📋 | Complete |
-| API Documentation | ✅ Endpoints listed | N/A | 📋 | Complete |
+| Feature | Backend | Frontend | Status |
+|---------|---------|----------|--------|
+| Recipe Edit UI | ✅ PUT endpoint | ✅ Modal form | Complete |
+| Recipe Delete UI | ✅ DELETE endpoint | ✅ Confirmation | Complete |
+| Meal Planning Calendar | ✅ CRUD endpoints | ✅ Month view | Complete |
+| Meal Plan Form | ✅ Validation | ✅ Date/recipe picker | Complete |
+| Shopping List | ✅ Aggregation logic | ✅ Table display | Complete |
+| Shopping List Export | ✅ Query endpoint | ✅ CSV/JSON download | Complete |
+| Collections CRUD | ✅ All endpoints | ✅ UI manager | Complete |
+| Add/Remove Recipes | ✅ Route + logic | ✅ Forms | Complete |
+| Database Models | ✅ 3 tables created | ✅ Integrated | Complete |
+| API Documentation | ✅ Endpoints listed | ✅ Included | Complete |
 
 ### 📊 Code Stats
 
