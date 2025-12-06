@@ -79,7 +79,7 @@ jobs:
 
   deploy-to-ubuntu-host:
     name: Deploy to Ubuntu host
-    runs-on: [self-hosted, local]
+    runs-on: self-hosted
     needs: [backend-tests, frontend-tests]
     if: github.ref == 'refs/heads/main'
     env:
