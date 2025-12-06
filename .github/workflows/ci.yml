@@ -1,0 +1,124 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  backend-tests:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('backend/package.json') != '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --no-progress || npm install --no-progress
+        working-directory: backend
+
+      - name: Run tests
+        run: npm test -- --runInBand
+        working-directory: backend
+
+  frontend-tests:
+    name: Frontend tests
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('frontend/package.json') != '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --no-progress || npm install --no-progress
+        working-directory: frontend
+
+      - name: Run tests
+        run: npm test -- --runInBand
+        working-directory: frontend
+
+  deploy-placeholder:
+    name: Deploy to Ubuntu host
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests]
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+      DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+
+      - name: Install backend deps (prod)
+        run: npm ci --omit=dev --no-progress
+        working-directory: backend
+
+      - name: Install frontend deps and build
+        run: |
+          npm ci --no-progress
+          npm run build
+        working-directory: frontend
+
+      - name: Prepare SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ env.DEPLOY_SSH_KEY }}
+
+      - name: Add known hosts
+        if: env.DEPLOY_KNOWN_HOSTS != ''
+        run: |
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+
+      - name: Sync repository to server
+        run: |
+          rsync -az --delete \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            ./ ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}
+
+      - name: Remote install/build/restart
+        env:
+          REMOTE_PATH: ${{ env.DEPLOY_PATH }}
+        run: |
+          ssh ${DEPLOY_USER}@${DEPLOY_HOST} "bash -s" <<'EOF'
+          set -euo pipefail
+          cd "$REMOTE_PATH/backend"
+          npm ci --omit=dev --no-progress
+          pm2 restart recipe-app || pm2 start src/server.js --name recipe-app
+
+          cd "$REMOTE_PATH/frontend"
+          npm ci --no-progress
+          npm run build
+          rm -rf "$REMOTE_PATH/static"/*
+          cp -r dist/* "$REMOTE_PATH/static"/
+          EOF

@@ -20,12 +20,12 @@ Development of a web-based recipe management application inspired by RecipeOne, 
 ### Deliverables
 - [x] Development requirements document
 - [x] Hosting platform specifications
-- [ ] GitHub/GitLab repository setup
-- [ ] Local development environment configured
-- [ ] Ubuntu server prepared with nginx
-- [ ] Database server installed and configured
-- [ ] CI/CD pipeline basics
-- [ ] Project management board (Trello/Jira/GitHub Projects)
+- [x] GitHub/GitLab repository setup
+- [x] Local development environment configured
+- [x] Ubuntu server prepared with nginx
+- [x] Database server installed and configured
+- [x] CI/CD pipeline basics
+- [x] Project management board (Trello/Jira/GitHub Projects)
 
 ### Success Criteria
 - Development team can run project locally
