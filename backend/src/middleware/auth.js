@@ -1,5 +1,23 @@
 import jwt from 'jsonwebtoken';
 
+export const verifyToken = (token) => {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    throw new Error('Invalid or expired token');
+  }
+};
+
+export const refreshAccessToken = (refreshToken) => {
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const newToken = jwt.sign({ userId: decoded.userId, email: decoded.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    return newToken;
+  } catch (error) {
+    throw new Error('Invalid or expired refresh token');
+  }
+};
+
 export const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
   

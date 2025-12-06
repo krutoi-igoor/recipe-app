@@ -58,3 +58,11 @@ export const validate = (schema) => (req, res, next) => {
   req.validatedData = value;
   next();
 };
+
+// Export individual schemas for tests
+export const registerSchema = schemas.register;
+export const loginSchema = schemas.login;
+export const recipeSchema = schemas.recipe;
+export const mealPlanSchema = schemas.mealPlan;
+export const collectionRecipeSchema = schemas.collectionRecipe;
+export const collectionSchema = schemas.collection;
