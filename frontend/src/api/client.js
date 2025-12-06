@@ -96,6 +96,31 @@ export const api = {
     list: () => request('/recipes', { auth: true }),
     create: (payload) => request('/recipes', { method: 'POST', body: payload, auth: true }),
     get: (id) => request(`/recipes/${id}`, { auth: true }),
+    update: (id, payload) => request(`/recipes/${id}`, { method: 'PUT', body: payload, auth: true }),
+    delete: (id) => request(`/recipes/${id}`, { method: 'DELETE', auth: true }),
+  },
+
+  mealPlans: {
+    list: (params = {}) => {
+      const qs = new URLSearchParams(params).toString();
+      return request(`/meal-plans${qs ? '?' + qs : ''}`, { auth: true });
+    },
+    create: (payload) => request('/meal-plans', { method: 'POST', body: payload, auth: true }),
+    get: (id) => request(`/meal-plans/${id}`, { auth: true }),
+    update: (id, payload) => request(`/meal-plans/${id}`, { method: 'PUT', body: payload, auth: true }),
+    delete: (id) => request(`/meal-plans/${id}`, { method: 'DELETE', auth: true }),
+    shoppingList: (params = {}) => {
+      const qs = new URLSearchParams(params).toString();
+      return request(`/meal-plans/shopping-list${qs ? '?' + qs : ''}`, { auth: true });
+    },
+  },
+
+  collections: {
+    list: () => request('/collections', { auth: true }),
+    create: (payload) => request('/collections', { method: 'POST', body: payload, auth: true }),
+    addRecipe: (collectionId, payload) => request(`/collections/${collectionId}/recipes`, { method: 'POST', body: payload, auth: true }),
+    removeRecipe: (collectionId, recipeId) => request(`/collections/${collectionId}/recipes/${recipeId}`, { method: 'DELETE', auth: true }),
+    delete: (id) => request(`/collections/${id}`, { method: 'DELETE', auth: true }),
   },
 
   rawGet: (path) => fetch(`${API_BASE}${path}`),

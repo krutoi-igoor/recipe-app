@@ -29,6 +29,21 @@ export const schemas = {
     prepTime: Joi.number().optional(),
     cookTime: Joi.number().optional(),
     tags: Joi.array().items(Joi.string()).optional(),
+    imageUrl: Joi.string().optional(),
+  }),
+
+  mealPlan: Joi.object({
+    date: Joi.date().required(),
+    recipeId: Joi.number().optional().allow(null),
+    notes: Joi.string().optional(),
+  }),
+
+  collection: Joi.object({
+    name: Joi.string().required(),
+  }),
+
+  collectionRecipe: Joi.object({
+    recipeId: Joi.number().required(),
   }),
 };
 

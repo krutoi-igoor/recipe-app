@@ -20,7 +20,9 @@ model User {
   firstName String?
   lastName  String?
   
-  recipes   Recipe[]
+  recipes     Recipe[]
+  mealPlans   MealPlan[]
+  collections Collection[]
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -37,11 +39,55 @@ model Recipe {
   prepTime    Int?    // minutes
   cookTime    Int?    // minutes
   tags        String? // comma-separated or JSON
+  imageUrl    String?
   
   user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mealPlans   MealPlan[]
+  collectionRecipes CollectionRecipe[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
   @@index([userId])
+}
+
+model MealPlan {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  date      DateTime
+  recipeId  Int?
+  notes     String?
+  
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe    Recipe? @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@index([recipeId])
+}
+
+model Collection {
+  id    Int    @id @default(autoincrement())
+  userId Int
+  name  String
+  
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipes CollectionRecipe[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+model CollectionRecipe {
+  collectionId Int
+  recipeId     Int
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  
+  @@id([collectionId, recipeId])
 }

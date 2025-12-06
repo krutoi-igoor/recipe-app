@@ -6,6 +6,8 @@ import 'express-async-errors';
 import healthRouter from './routes/health.js';
 import authRouter from './routes/auth.js';
 import recipesRouter from './routes/recipes.js';
+import mealPlansRouter from './routes/mealPlans.js';
+import collectionsRouter from './routes/collections.js';
 
 const app = express();
 
@@ -18,6 +20,8 @@ app.use(morgan('dev'));
 app.use('/api/v1/health', healthRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/recipes', recipesRouter);
+app.use('/api/v1/meal-plans', mealPlansRouter);
+app.use('/api/v1/collections', collectionsRouter);
 
 // Basic root responder
 app.get('/api/v1', (_req, res) => {
