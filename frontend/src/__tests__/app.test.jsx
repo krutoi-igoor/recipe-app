@@ -49,7 +49,7 @@ const renderApp = (route = '/') => {
 describe('App routing and landing', () => {
   it('shows landing hero on root route', async () => {
     renderApp('/');
-    expect(await screen.findByText(/recipe app/i)).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /recipe app/i })).toBeInTheDocument();
     expect(screen.getByText(/paste a social/i)).toBeInTheDocument();
   });
 
