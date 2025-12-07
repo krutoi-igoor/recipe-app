@@ -118,6 +118,8 @@ jobs:
             --exclude='.git' \
             --exclude='node_modules' \
             --exclude='_work' \
+            --exclude='backend/.env' \
+            --exclude='backend/.env.*' \
             ./ ${DEPLOY_PATH}/
 
       - name: Install and build backend
