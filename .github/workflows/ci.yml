@@ -125,6 +125,30 @@ jobs:
           cd ${DEPLOY_PATH}/backend
           npm ci --omit=dev --no-progress
           
+          # Verify .env exists (must be created manually on server)
+          if [ ! -f .env ]; then
+            echo "ERROR: .env file not found at ${DEPLOY_PATH}/backend/.env"
+            echo "Please create it manually on the server with required secrets."
+            exit 1
+          fi
+          
+          # Apply Prisma migrations
+          npx prisma migrate deploy
+          
+          # Create/update PM2 ecosystem config
+          cat > ecosystem.config.cjs <<'EOFCONFIG'
+          module.exports = {
+            apps: [
+              {
+                name: "recipe-app",
+                script: "src/server.js",
+                cwd: "${DEPLOY_PATH}/backend",
+                env: require('dotenv').config({ path: '${DEPLOY_PATH}/backend/.env' }).parsed || {}
+              }
+            ]
+          }
+          EOFCONFIG
+          
           # Check if PM2 is installed, if not install it
           if ! command -v pm2 &> /dev/null; then
             npm install -g pm2
@@ -132,7 +156,7 @@ jobs:
           
           # Delete existing PM2 process if it exists, then start fresh
           pm2 delete recipe-app || true
-          pm2 start src/server.js --name recipe-app --cwd ${DEPLOY_PATH}/backend
+          pm2 start ecosystem.config.cjs
           pm2 save
           
           # Ensure PM2 resurrects on reboot
