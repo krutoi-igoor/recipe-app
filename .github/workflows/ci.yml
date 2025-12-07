@@ -143,6 +143,8 @@ jobs:
           echo ".env file found, proceeding with migrations..."
           
           # Apply Prisma migrations
+          # Mark initial migration as applied if tables already exist (idempotent)
+          npx prisma migrate resolve --applied 20251206063156_init || true
           npx prisma migrate deploy
           
           # Check if PM2 is installed, if not install it
