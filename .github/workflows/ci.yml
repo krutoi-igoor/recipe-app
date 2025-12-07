@@ -127,11 +127,14 @@ jobs:
           
           # Verify .env exists (must be created manually on server)
           if [ ! -f .env ]; then
-            echo "ERROR: .env file not found at ${DEPLOY_PATH}/backend/.env"
+            echo "ERROR: .env file not found in $(pwd)"
+            echo "Expected location: ${DEPLOY_PATH}/backend/.env"
             echo "The .env file must exist on the server before deployment."
-            echo "It should have been created during initial server setup."
+            ls -la
             exit 1
           fi
+          
+          echo ".env file found, proceeding with migrations..."
           
           # Apply Prisma migrations
           npx prisma migrate deploy
