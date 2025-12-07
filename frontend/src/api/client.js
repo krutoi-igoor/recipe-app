@@ -63,13 +63,8 @@ const request = async (path, { method = 'GET', body, auth = false, retry = true 
   });
 
   if (res.status === 401 && auth && retry) {
-    try {
-      await performRefresh();
-      return request(path, { method, body, auth, retry: false });
-    } catch (err) {
-      clearTokens();
-      throw err;
-    }
+    await performRefresh();
+    return request(path, { method, body, auth, retry: false });
   }
 
   return handleJson(res);
@@ -125,6 +120,9 @@ export const api = {
 
   imports: {
     fromUrl: (payload) => request('/imports/url', { method: 'POST', body: payload, auth: true }),
+    fromSocial: (payload) => request('/imports/social', { method: 'POST', body: payload, auth: true }),
+    fromImage: (payload) => request('/imports/image', { method: 'POST', body: payload, auth: true }),
+    autoTag: (recipeId) => request(`/imports/${recipeId}/auto-tag`, { method: 'POST', body: {}, auth: true }),
   },
 
   rawGet: (path) => fetch(`${API_BASE}${path}`),

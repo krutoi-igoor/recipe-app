@@ -76,6 +76,25 @@ function App() {
   const [importStatus, setImportStatus] = useState('idle');
   const [importMessage, setImportMessage] = useState('');
   const [importPreview, setImportPreview] = useState(null);
+    const [importUrl, setImportUrl] = useState('');
+    const [importTitle, setImportTitle] = useState('');
+    const [importDescription, setImportDescription] = useState('');
+    const [importStatus, setImportStatus] = useState('idle');
+    const [importMessage, setImportMessage] = useState('');
+    const [importPreview, setImportPreview] = useState(null);
+    const [importTab, setImportTab] = useState('url'); // 'url' | 'social' | 'image'
+  
+    // Social import state
+    const [socialUrl, setSocialUrl] = useState('');
+    const [socialStatus, setSocialStatus] = useState('idle');
+    const [socialMessage, setSocialMessage] = useState('');
+    const [socialPreview, setSocialPreview] = useState(null);
+  
+    // Image import state
+    const [imageUrl, setImageUrl] = useState('');
+    const [imageStatus, setImageStatus] = useState('idle');
+    const [imageMessage, setImageMessage] = useState('');
+    const [imagePreview, setImagePreview] = useState(null);@@
   
   const [editingRecipe, setEditingRecipe] = useState(null);
   const [editForm, setEditForm] = useState(initialRecipe);
@@ -125,6 +144,83 @@ function App() {
       setAuthMessage(err.message || 'Health check failed');
     }
   };
+                  </div>
+
+                  <div style={{ border: '1px dashed #cdd4e0', borderRadius: 8, padding: '1rem', background: '#f8fbff', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                      <div>
+                        <div className="chip" style={{ marginBottom: '0.35rem' }}>New</div>
+                        <h3 style={{ margin: '0 0 0.25rem' }}>Import from Social Media</h3>
+                        <p style={{ margin: 0, color: '#4a5568' }}>TikTok, Instagram, YouTube, or Shorts links</p>
+                      </div>
+                      <span style={{ fontSize: '0.9rem', color: '#5c6475' }}>Beta</span>
+                    </div>
+
+                    <form onSubmit={handleImportFromSocial} style={{ display: 'grid', gap: '0.5rem' }}>
+                      <input
+                        placeholder="https://tiktok.com/@creator/video/... or https://instagram.com/p/..."
+                        value={socialUrl}
+                        onChange={(e) => setSocialUrl(e.target.value)}
+                        required
+                      />
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <button type="submit" disabled={socialStatus === 'loading'}>
+                          {socialStatus === 'loading' ? 'Importing...' : 'Import from social'}
+                        </button>
+                        {socialMessage && (
+                          <span style={{ color: socialStatus === 'error' ? '#b00' : '#0a0' }}>{socialMessage}</span>
+                        )}
+                      </div>
+                    </form>
+
+                    {socialPreview && (
+                      <div style={{ marginTop: '0.75rem', padding: '0.75rem', border: '1px solid #e2e8f0', borderRadius: 6, background: '#fff' }}>
+                        <div style={{ fontWeight: 700, marginBottom: '0.5rem' }}>{socialPreview.title}</div>
+                        {socialPreview.sourceUrl && (
+                          <a href={socialPreview.sourceUrl} target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem', display: 'block', marginBottom: '0.5rem' }}>
+                            View video
+                          </a>
+                        )}
+                        <span className="chip">Imported</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ border: '1px dashed #cdd4e0', borderRadius: 8, padding: '1rem', background: '#f8fbff', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                      <div>
+                        <div className="chip" style={{ marginBottom: '0.35rem' }}>New</div>
+                        <h3 style={{ margin: '0 0 0.25rem' }}>Import from Image</h3>
+                        <p style={{ margin: 0, color: '#4a5568' }}>Photo or screenshot of a recipe</p>
+                      </div>
+                      <span style={{ fontSize: '0.9rem', color: '#5c6475' }}>Beta</span>
+                    </div>
+
+                    <form onSubmit={handleImportFromImage} style={{ display: 'grid', gap: '0.5rem' }}>
+                      <input
+                        placeholder="https://example.com/recipe-photo.jpg"
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        required
+                      />
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <button type="submit" disabled={imageStatus === 'loading'}>
+                          {imageStatus === 'loading' ? 'Extracting...' : 'Import from image'}
+                        </button>
+                        {imageMessage && (
+                          <span style={{ color: imageStatus === 'error' ? '#b00' : '#0a0' }}>{imageMessage}</span>
+                        )}
+                      </div>
+                    </form>
+
+                    {imagePreview && (
+                      <div style={{ marginTop: '0.75rem', padding: '0.75rem', border: '1px solid #e2e8f0', borderRadius: 6, background: '#fff' }}>
+                        <div style={{ fontWeight: 700, marginBottom: '0.5rem' }}>{imagePreview.title}</div>
+                        <span className="chip">Imported</span>
+                      </div>
+                    )}
+                  </div>
+
 
   const fetchMe = async () => {
     try {
@@ -351,6 +447,93 @@ function App() {
 
       setEditStatus('success');
       setEditMessage('Recipe updated');
+    const handleImportFromUrl = async (e) => {
+      e.preventDefault();
+      const url = importUrl.trim();
+      if (!url) {
+        setImportStatus('error');
+        setImportMessage('Enter a recipe URL');
+        return;
+      }
+
+      setImportStatus('loading');
+      setImportMessage('');
+      setImportPreview(null);
+
+      try {
+        const res = await api.imports.fromUrl({
+          url,
+          title: importTitle || undefined,
+          description: importDescription || undefined,
+        });
+
+        const recipe = res?.data?.data || res?.data || res;
+        setImportPreview(recipe);
+        setImportStatus('success');
+        setImportMessage('Imported. Review below and edit in Recipes.');
+        setImportUrl('');
+        setImportTitle('');
+        setImportDescription('');
+        await loadRecipes();
+      } catch (err) {
+        setImportStatus('error');
+        setImportMessage(err.message || 'Import failed');
+      }
+    };
+
+    const handleImportFromSocial = async (e) => {
+      e.preventDefault();
+      const url = socialUrl.trim();
+      if (!url) {
+        setSocialStatus('error');
+        setSocialMessage('Enter a social media URL');
+        return;
+      }
+
+      setSocialStatus('loading');
+      setSocialMessage('');
+      setSocialPreview(null);
+
+      try {
+        const res = await api.imports.fromSocial({ url });
+        const recipe = res?.data?.data || res?.data || res;
+        setSocialPreview(recipe);
+        setSocialStatus('success');
+        setSocialMessage('Imported from social. Review below and edit in Recipes.');
+        setSocialUrl('');
+        await loadRecipes();
+      } catch (err) {
+        setSocialStatus('error');
+        setSocialMessage(err.message || 'Social import failed');
+      }
+    };
+
+    const handleImportFromImage = async (e) => {
+      e.preventDefault();
+      const url = imageUrl.trim();
+      if (!url) {
+        setImageStatus('error');
+        setImageMessage('Enter an image URL');
+        return;
+      }
+
+      setImageStatus('loading');
+      setImageMessage('');
+      setImagePreview(null);
+
+      try {
+        const res = await api.imports.fromImage({ imageUrl: url });
+        const recipe = res?.data?.data || res?.data || res;
+        setImagePreview(recipe);
+        setImageStatus('success');
+        setImageMessage('Image imported. Review and edit in Recipes.');
+        setImageUrl('');
+        await loadRecipes();
+      } catch (err) {
+        setImageStatus('error');
+        setImageMessage(err.message || 'Image import failed');
+      }
+    };@@
       await loadRecipes();
       setTimeout(closeEditModal, 800);
     } catch (err) {
@@ -842,10 +1025,21 @@ function App() {
                         <button type="button" onClick={() => openEditModal(r)} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}>Edit</button>
                         <button type="button" onClick={() => handleDeleteRecipe(r.id)} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#b00', color: '#fff' }}>Delete</button>
                       </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
+                        <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '0.5rem' }}>
+                          <button type="button" onClick={() => openEditModal(r)} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}>Edit</button>
+                          <button type="button" onClick={async () => {
+                            try {
+                              const res = await api.imports.autoTag(r.id);
+                              const updated = res?.data?.data || res?.data || res;
+                              if (updated) {
+                                setRecipes(recipes.map(rec => rec.id === r.id ? updated : rec));
+                              }
+                            } catch (err) {
+                              console.error('Auto-tag failed:', err);
+                            }
+                          }} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#0066cc', color: '#fff' }}>Auto-tag</button>
+                          <button type="button" onClick={() => handleDeleteRecipe(r.id)} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#b00', color: '#fff' }}>Delete</button>
+                        </div>@@
             </>
           )}
         </div>

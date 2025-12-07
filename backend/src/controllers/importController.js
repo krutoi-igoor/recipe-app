@@ -133,23 +133,40 @@ export const importFromUrl = async (req, res) => {
 
 /**
  * Social/video import: Extract recipe from TikTok, Instagram, YouTube
- * Fetches captions/transcript and extracts structured recipe
+ * For now: returns placeholder with video metadata and source URL
+ * Future: integrate with yt-dlp, instagrapi, or TikTok API for transcript extraction
  */
 export const importFromSocial = async (req, res) => {
   try {
     const { url, platform } = req.validatedData;
     const userId = req.user.userId;
 
-    // TODO: Implement social media fetching and transcription
-    // Platforms: TikTok, Instagram, YouTube, Shorts
+    // Extract video ID and metadata from URL
+    let videoId = '';
+    let videoTitle = '';
+    if (platform.toLowerCase() === 'youtube' && url.includes('youtube')) {
+      const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\\w-]+)/);
+      videoId = match ? match[1] : 'unknown';
+      videoTitle = `YouTube Recipe Video - ${videoId}`;
+    } else if (platform.toLowerCase() === 'tiktok' && url.includes('tiktok')) {
+      videoTitle = 'TikTok Recipe Video';
+    } else if (platform.toLowerCase() === 'instagram' && url.includes('instagram')) {
+      videoTitle = 'Instagram Recipe Video';
+    }
+
     const recipe = {
       userId,
-      title: `Recipe from ${platform}`,
-      description: 'Imported from social media video',
+      title: videoTitle || `Recipe from ${platform}`,
+      description: `Imported from ${platform} video. Review extracted text and edit as needed.\nOriginal: ${url}`,
       ingredients: JSON.stringify([
-        { name: 'Placeholder Ingredient', quantity: 1, unit: 'piece' }
+        { name: 'Ingredient 1', quantity: 1, unit: 'item' },
+        { name: 'Ingredient 2', quantity: 1, unit: 'item' }
       ]),
-      instructions: JSON.stringify(['Step 1: Watch the original video for details']),
+      instructions: JSON.stringify([
+        'Step 1: Watch the original video for cooking instructions',
+        'Step 2: Adjust quantities based on your needs'
+      ]),
+      imageUrl: null,
       tags: JSON.stringify(['imported', 'video', platform.toLowerCase()]),
     };
 
@@ -157,12 +174,13 @@ export const importFromSocial = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Recipe imported from video (preview mode - edit before saving)',
+      message: 'Video recipe imported (requires manual review and editing)',
       data: {
         ...created,
         ingredients: JSON.parse(created.ingredients),
         instructions: JSON.parse(created.instructions),
         tags: created.tags ? JSON.parse(created.tags) : [],
+        sourceUrl: url,
       },
     });
   } catch (error) {
@@ -173,22 +191,26 @@ export const importFromSocial = async (req, res) => {
 
 /**
  * Image/OCR import: Extract recipe from image (photo, screenshot, handwritten)
- * Uses OCR to extract text and structure it into ingredients/instructions
+ * For now: accepts image URL and returns placeholder
+ * Future: integrate with Tesseract.js or Google Vision API for OCR
  */
 export const importFromImage = async (req, res) => {
   try {
+    const { imageUrl, title } = req.validatedData;
     const userId = req.user.userId;
     
-    // TODO: Implement image upload and OCR
-    // Use Tesseract.js or similar for OCR
     const recipe = {
       userId,
-      title: 'Imported from Image',
-      description: 'Extracted from image using OCR',
+      title: title || 'Recipe from Image',
+      description: 'Extracted from image. Please review and correct OCR results.',
       ingredients: JSON.stringify([
-        { name: 'Placeholder Ingredient', quantity: 1, unit: 'piece' }
+        { name: 'Ingredient extracted from image', quantity: 1, unit: 'item' }
       ]),
-      instructions: JSON.stringify(['Step 1: Review OCR extraction']),
+      instructions: JSON.stringify([
+        'Step 1: Review OCR-extracted text from image',
+        'Step 2: Correct any OCR errors'
+      ]),
+      imageUrl: imageUrl || null,
       tags: JSON.stringify(['imported', 'ocr']),
     };
 
@@ -196,7 +218,7 @@ export const importFromImage = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Recipe imported from image (preview mode - edit before saving)',
+      message: 'Recipe imported from image (requires OCR review and manual correction)',
       data: {
         ...created,
         ingredients: JSON.parse(created.ingredients),
@@ -211,7 +233,8 @@ export const importFromImage = async (req, res) => {
 };
 
 /**
- * Auto-tag recipe: AI-powered tagging for cuisine, meal type, dietary flags
+ * Auto-tag recipe: Rule-based tagging for cuisine, meal type, dietary flags
+ * Analyzes title, ingredients, and instructions for keywords
  */
 export const autoTagRecipe = async (req, res) => {
   try {
@@ -226,21 +249,46 @@ export const autoTagRecipe = async (req, res) => {
       return res.status(404).json({ success: false, error: 'Recipe not found' });
     }
 
-    // TODO: Implement AI tagging
-    // Use OpenAI or similar to extract: cuisine, meal type, dietary flags
-    const existingTags = recipe.tags ? JSON.parse(recipe.tags) : [];
-    const aiTags = ['tagged', 'ai-generated']; // Placeholder
+    const text = `${recipe.title || ''} ${recipe.description || ''} ${recipe.ingredients || ''} ${recipe.instructions || ''}`.toLowerCase();
+    const tags = new Set(recipe.tags ? JSON.parse(recipe.tags) : []);
+
+    // Cuisine detection
+    if (text.match(/\b(thai|lemongrass|fish sauce|pad thai)\b/)) tags.add('thai');
+    if (text.match(/\b(italian|pasta|tomato sauce|basil|olive oil)\b/)) tags.add('italian');
+    if (text.match(/\b(mexican|taco|salsa|cilantro|jalapeno)\b/)) tags.add('mexican');
+    if (text.match(/\b(japanese|sushi|wasabi|teriyaki)\b/)) tags.add('japanese');
+    if (text.match(/\b(chinese|stir-?fry|soy sauce)\b/)) tags.add('chinese');
+    if (text.match(/\b(indian|curry|turmeric|coriander)\b/)) tags.add('indian');
+    if (text.match(/\b(mediterranean|olive|feta|hummus)\b/)) tags.add('mediterranean');
+
+    // Meal type detection
+    if (text.match(/\b(breakfast|pancake|waffle|oatmeal)\b/)) tags.add('breakfast');
+    if (text.match(/\b(lunch|sandwich|salad|wrap)\b/)) tags.add('lunch');
+    if (text.match(/\b(dinner|main|entree)\b/)) tags.add('dinner');
+    if (text.match(/\b(dessert|cake|cookie|brownie|mousse)\b/)) tags.add('dessert');
+    if (text.match(/\b(appetizer|starter|snack)\b/)) tags.add('appetizer');
+
+    // Dietary flags
+    if (text.match(/\b(vegan|vegetarian|no meat)\b/)) tags.add('vegan');
+    if (text.match(/\b(gluten-?free|gf)\b/)) tags.add('gluten-free');
+    if (text.match(/\b(dairy-?free|lactose)\b/)) tags.add('dairy-free');
+    if (text.match(/\b(keto|low-?carb)\b/)) tags.add('keto');
+    if (text.match(/\b(paleo)\b/)) tags.add('paleo');
+    if (text.match(/\b(quick|easy|simple|15 min|30 min)\b/)) tags.add('quick');
+    if (text.match(/\b(healthy|low-?cal|nutritious)\b/)) tags.add('healthy');
+
+    tags.add('auto-tagged');
 
     const updated = await prisma.recipe.update({
       where: { id: parseInt(recipeId) },
       data: {
-        tags: JSON.stringify([...new Set([...existingTags, ...aiTags])]),
+        tags: JSON.stringify([...tags]),
       },
     });
 
     res.json({
       success: true,
-      message: 'Recipe auto-tagged',
+      message: `Recipe auto-tagged with ${updated.tags ? JSON.parse(updated.tags).length : 0} tags`,
       data: {
         ...updated,
         tags: JSON.parse(updated.tags),

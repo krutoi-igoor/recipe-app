@@ -87,6 +87,7 @@ describe('App routing and landing', () => {
     expect(api.imports.fromUrl).toHaveBeenCalledWith({ url: 'https://example.com/cake', title: undefined, description: undefined });
 
     expect(await screen.findByText(/Imported\. Review below/i)).toBeInTheDocument();
-    expect(await screen.findByText('Imported')).toBeInTheDocument();
+    const importedHeadings = await screen.findAllByText('Imported');
+    expect(importedHeadings.length).toBeGreaterThanOrEqual(1);
   });
 });

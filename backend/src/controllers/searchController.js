@@ -32,23 +32,24 @@ export const searchRecipes = async (req, res) => {
       ];
     }
 
-    // Tag filtering: recipe must contain ALL specified tags
+    // Tag filtering: recipe must contain ALL specified tags (case-insensitive JSON search)
     if (parsedTags.length > 0) {
-      where.tags = {
-        contains: JSON.stringify(parsedTags).slice(1, -1), // Simple substring match for tags in JSON array
-      };
+      const tagQueries = parsedTags.map((tag) => ({
+        tags: { contains: `"${tag}"`, mode: 'insensitive' },
+      }));
+      where.AND = tagQueries;
     }
 
-    // Time filters
-    if (maxPrepTime) {
-      where.prepTime = { lte: parseInt(maxPrepTime) };
+    // Meal type, dietary, cuisine filtering via tags
+    if (mealType) {
+      where.tags = { contains: `"${mealType}"` };
     }
-    if (maxCookTime) {
-      where.cookTime = { lte: parseInt(maxCookTime) };
+    if (dietary) {
+      where.tags = { contains: `"${dietary}"` };
     }
-
-    // Note: mealType, dietary, cuisine would come from tags in a simple implementation
-    // In production, add these as separate columns or use full-text search with database-level support
+    if (cuisine) {
+      where.tags = { contains: `"${cuisine}"` };
+    }
 
     const recipes = await prisma.recipe.findMany({
       where,
