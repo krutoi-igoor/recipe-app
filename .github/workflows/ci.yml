@@ -125,6 +125,21 @@ jobs:
           cd ${DEPLOY_PATH}/backend
           npm ci --omit=dev --no-progress
           
+          # Create .env file if it doesn't exist
+          if [ ! -f .env ]; then
+            cp ../.env .env || cat > .env << EOF
+NODE_ENV=production
+PORT=3000
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/recipe_app
+REDIS_URL=redis://localhost:6379
+JWT_SECRET=\${JWT_SECRET:-change_me}
+JWT_REFRESH_SECRET=\${JWT_REFRESH_SECRET:-change_me_too}
+AI_PROVIDER=openai
+OPENAI_API_KEY=
+SMTP_URL=smtp://user:pass@smtp.example.com:587
+EOF
+          fi
+          
           # Check if PM2 is installed, if not install it
           if ! command -v pm2 &> /dev/null; then
             npm install -g pm2
