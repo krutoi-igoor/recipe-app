@@ -13,26 +13,26 @@
     "migrate": "prisma migrate deploy"
   },
   "dependencies": {
+    "@prisma/client": "5.7.1",
+    "axios": "^1.7.0",
     "bcryptjs": "2.4.3",
+    "cheerio": "^1.0.0",
     "cors": "2.8.5",
     "dotenv": "16.4.5",
     "express": "4.19.2",
     "express-async-errors": "3.1.1",
     "helmet": "7.0.0",
     "joi": "17.11.0",
+    "json2csv": "^5.0.7",
     "jsonwebtoken": "9.0.2",
-    "morgan": "1.10.0",
-    "@prisma/client": "5.7.1",
-    "cheerio": "^1.0.0",
-    "axios": "^1.7.0",
-    "json2csv": "^6.0.0"
+    "morgan": "1.10.0"
   },
   "devDependencies": {
-    "prisma": "5.7.1",
-    "nodemon": "3.1.0",
-    "jest": "^29.7.0",
+    "@babel/preset-env": "^7.23.0",
     "babel-jest": "^29.7.0",
-    "supertest": "^6.3.3",
-    "@babel/preset-env": "^7.23.0"
+    "jest": "^29.7.0",
+    "nodemon": "3.1.0",
+    "prisma": "5.7.1",
+    "supertest": "^6.3.3"
   }
 }
