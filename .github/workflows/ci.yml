@@ -125,13 +125,17 @@ jobs:
           cd ${DEPLOY_PATH}/backend
           npm ci --omit=dev --no-progress
           
-          # Verify .env exists (must be created manually on server)
+          # Verify .env exists, copy from persistent location if needed
           if [ ! -f .env ]; then
-            echo "ERROR: .env file not found in $(pwd)"
-            echo "Expected location: ${DEPLOY_PATH}/backend/.env"
-            echo "The .env file must exist on the server before deployment."
-            ls -la
-            exit 1
+            echo ".env not found in deployment directory"
+            if [ -f /home/${DEPLOY_USER}/recipe-app/backend/.env ]; then
+              echo "Copying .env from /home/${DEPLOY_USER}/recipe-app/backend/.env"
+              cp /home/${DEPLOY_USER}/recipe-app/backend/.env .env
+            else
+              echo "ERROR: .env file not found in deployment or persistent location"
+              echo "Create it at: /home/${DEPLOY_USER}/recipe-app/backend/.env"
+              exit 1
+            fi
           fi
           
           echo ".env file found, proceeding with migrations..."
