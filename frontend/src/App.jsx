@@ -69,6 +69,13 @@ function App() {
   const [ingredients, setIngredients] = useState([{ ...emptyIngredient }]);
   const [recipeStatus, setRecipeStatus] = useState('idle');
   const [recipeMessage, setRecipeMessage] = useState('');
+
+  const [importUrl, setImportUrl] = useState('');
+  const [importTitle, setImportTitle] = useState('');
+  const [importDescription, setImportDescription] = useState('');
+  const [importStatus, setImportStatus] = useState('idle');
+  const [importMessage, setImportMessage] = useState('');
+  const [importPreview, setImportPreview] = useState(null);
   
   const [editingRecipe, setEditingRecipe] = useState(null);
   const [editForm, setEditForm] = useState(initialRecipe);
@@ -226,6 +233,40 @@ function App() {
     } catch (err) {
       setRecipeStatus('error');
       setRecipeMessage(err.message || 'Could not create recipe');
+    }
+  };
+
+  const handleImportFromUrl = async (e) => {
+    e.preventDefault();
+    const url = importUrl.trim();
+    if (!url) {
+      setImportStatus('error');
+      setImportMessage('Enter a recipe URL');
+      return;
+    }
+
+    setImportStatus('loading');
+    setImportMessage('');
+    setImportPreview(null);
+
+    try {
+      const res = await api.imports.fromUrl({
+        url,
+        title: importTitle || undefined,
+        description: importDescription || undefined,
+      });
+
+      const recipe = res?.data?.data || res?.data || res;
+      setImportPreview(recipe);
+      setImportStatus('success');
+      setImportMessage('Imported. Review below and edit in Recipes.');
+      setImportUrl('');
+      setImportTitle('');
+      setImportDescription('');
+      await loadRecipes();
+    } catch (err) {
+      setImportStatus('error');
+      setImportMessage(err.message || 'Import failed');
     }
   };
 
@@ -620,6 +661,86 @@ function App() {
           {!isAuthed && <p>Login or register to view recipes.</p>}
           {isAuthed && (
             <>
+              <div style={{ border: '1px dashed #cdd4e0', borderRadius: 8, padding: '1rem', background: '#f8fbff', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
+                  <div>
+                    <div className="chip" style={{ marginBottom: '0.35rem' }}>New</div>
+                    <h3 style={{ margin: '0 0 0.25rem' }}>Import from URL</h3>
+                    <p style={{ margin: 0, color: '#4a5568' }}>Paste a recipe link; we will extract title, ingredients, and steps.</p>
+                  </div>
+                  <span style={{ fontSize: '0.9rem', color: '#5c6475' }}>Beta</span>
+                </div>
+
+                <form onSubmit={handleImportFromUrl} style={{ display: 'grid', gap: '0.5rem', marginTop: '0.75rem' }}>
+                  <input
+                    placeholder="https://example.com/recipe"
+                    value={importUrl}
+                    onChange={(e) => setImportUrl(e.target.value)}
+                    required
+                  />
+                  <input
+                    placeholder="Optional title override"
+                    value={importTitle}
+                    onChange={(e) => setImportTitle(e.target.value)}
+                  />
+                  <textarea
+                    placeholder="Optional description"
+                    value={importDescription}
+                    onChange={(e) => setImportDescription(e.target.value)}
+                    rows={2}
+                  />
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <button type="submit" disabled={importStatus === 'loading'}>
+                      {importStatus === 'loading' ? 'Importing...' : 'Import recipe'}
+                    </button>
+                    {importMessage && (
+                      <span style={{ color: importStatus === 'error' ? '#b00' : '#0a0' }}>{importMessage}</span>
+                    )}
+                  </div>
+                </form>
+
+                {importPreview && (
+                  <div style={{ marginTop: '0.75rem', padding: '0.75rem', border: '1px solid #e2e8f0', borderRadius: 6, background: '#fff' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '0.5rem' }}>
+                      <div>
+                        <div style={{ fontWeight: 700 }}>{importPreview.title}</div>
+                        {importPreview.sourceUrl && (
+                          <a href={importPreview.sourceUrl} target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem' }}>
+                            View source
+                          </a>
+                        )}
+                        {importPreview.description && (
+                          <p style={{ margin: '0.35rem 0 0', color: '#4a5568' }}>{importPreview.description}</p>
+                        )}
+                      </div>
+                      <span className="chip">Imported</span>
+                    </div>
+
+                    {importPreview.ingredients?.length > 0 && (
+                      <div style={{ marginTop: '0.5rem' }}>
+                        <strong>Ingredients</strong>
+                        <ul style={{ margin: '0.25rem 0 0', paddingLeft: '1.25rem' }}>
+                          {importPreview.ingredients.map((ing, idx) => (
+                            <li key={idx}>{ing.name || ing} {ing.quantity ? `— ${ing.quantity} ${ing.unit || ''}` : ''}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {importPreview.instructions?.length > 0 && (
+                      <div style={{ marginTop: '0.5rem' }}>
+                        <strong>Instructions</strong>
+                        <ol style={{ margin: '0.25rem 0 0', paddingLeft: '1.25rem' }}>
+                          {importPreview.instructions.map((step, idx) => (
+                            <li key={idx}>{step}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <form onSubmit={handleCreateRecipe} style={{ display: 'grid', gap: '0.5rem', marginBottom: '1rem' }}>
                 <input
                   placeholder="Title"
@@ -1115,7 +1236,9 @@ function App() {
     setShowNewCollectionForm, newCollectionName, setNewCollectionName, handleCreateCollection,
     collectionStatus, collectionMessage, selectedCollection, setSelectedCollection,
     showAddRecipeToCollectionForm, setShowAddRecipeToCollectionForm, selectedRecipeForCollection,
-    setSelectedRecipeForCollection, handleAddRecipeToCollection, handleRemoveRecipeFromCollection, handleDeleteCollection
+    setSelectedRecipeForCollection, handleAddRecipeToCollection, handleRemoveRecipeFromCollection, handleDeleteCollection,
+    importUrl, importTitle, importDescription, importStatus, importMessage, importPreview,
+    setImportUrl, setImportTitle, setImportDescription, handleImportFromUrl
   ]);
   
   const isActive = (path) => isActivePath(location.pathname, path);

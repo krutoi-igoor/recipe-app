@@ -123,5 +123,9 @@ export const api = {
     delete: (id) => request(`/collections/${id}`, { method: 'DELETE', auth: true }),
   },
 
+  imports: {
+    fromUrl: (payload) => request('/imports/url', { method: 'POST', body: payload, auth: true }),
+  },
+
   rawGet: (path) => fetch(`${API_BASE}${path}`),
 };
