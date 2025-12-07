@@ -94,7 +94,15 @@ function App() {
     const [imageUrl, setImageUrl] = useState('');
     const [imageStatus, setImageStatus] = useState('idle');
     const [imageMessage, setImageMessage] = useState('');
-    const [imagePreview, setImagePreview] = useState(null);@@
+    const [imagePreview, setImagePreview] = useState(null);
+    
+    // Search and filter state
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [selectedMealType, setSelectedMealType] = useState('');
+    const [selectedDietary, setSelectedDietary] = useState('');
+    const [selectedCuisine, setSelectedCuisine] = useState('');
+    const [filterOptions, setFilterOptions] = useState({ mealTypes: [], dietaries: [], cuisines: [] });
   
   const [editingRecipe, setEditingRecipe] = useState(null);
   const [editForm, setEditForm] = useState(initialRecipe);
@@ -385,6 +393,28 @@ function App() {
         <p key={idx} style={{ margin: '0 0 0.25rem', color: '#444' }}>{p}</p>
       ));
   }, []);
+
+  const getFilteredRecipes = useCallback(() => {
+    return recipes.filter((r) => {
+      // Search by title and ingredients
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const matchesTitle = r.title.toLowerCase().includes(q);
+        const matchesIngredients = r.ingredients?.some(ing => ing.name?.toLowerCase().includes(q)) ?? false;
+        const matchesDescription = r.description?.toLowerCase().includes(q) ?? false;
+        if (!matchesTitle && !matchesIngredients && !matchesDescription) return false;
+      }
+
+      // Filter by tags (parse tags JSON)
+      const tags = r.tags ? (typeof r.tags === 'string' ? JSON.parse(r.tags) : r.tags) : [];
+      if (selectedMealType && !tags.includes(selectedMealType)) return false;
+      if (selectedDietary && !tags.some(t => t.toLowerCase().includes(selectedDietary.toLowerCase()))) return false;
+      if (selectedCuisine && !tags.some(t => t.toLowerCase().includes(selectedCuisine.toLowerCase()))) return false;
+
+      return true;
+    });
+  }, [recipes, searchQuery, selectedMealType, selectedDietary, selectedCuisine]);
+
 
   const updateIngredient = useCallback((index, key, value) => {
     setIngredients((prev) => prev.map((ing, i) => (i === index ? { ...ing, [key]: value } : ing)));
@@ -987,9 +1017,61 @@ function App() {
                 )}
               </form>
 
+              <div style={{ display: 'grid', gap: '0.75rem', marginBottom: '1rem', padding: '1rem', border: '1px solid #e2e8f0', borderRadius: 6, background: '#f8fbff' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.35rem', fontWeight: 600 }}>Search recipes</label>
+                  <input
+                    type="text"
+                    placeholder="Search by title or ingredients..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{ width: '100%' }}
+                  />
+                </div>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Meal Type</span>
+                    <select value={selectedMealType} onChange={(e) => setSelectedMealType(e.target.value)} style={{ padding: '0.5rem' }}>
+                      <option value="">All</option>
+                      <option value="breakfast">Breakfast</option>
+                      <option value="lunch">Lunch</option>
+                      <option value="dinner">Dinner</option>
+                      <option value="snack">Snack</option>
+                      <option value="dessert">Dessert</option>
+                    </select>
+                  </label>
+                  
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Dietary</span>
+                    <select value={selectedDietary} onChange={(e) => setSelectedDietary(e.target.value)} style={{ padding: '0.5rem' }}>
+                      <option value="">All</option>
+                      <option value="vegan">Vegan</option>
+                      <option value="vegetarian">Vegetarian</option>
+                      <option value="gluten-free">Gluten-Free</option>
+                      <option value="dairy-free">Dairy-Free</option>
+                      <option value="keto">Keto</option>
+                    </select>
+                  </label>
+                  
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Cuisine</span>
+                    <select value={selectedCuisine} onChange={(e) => setSelectedCuisine(e.target.value)} style={{ padding: '0.5rem' }}>
+                      <option value="">All</option>
+                      <option value="italian">Italian</option>
+                      <option value="asian">Asian</option>
+                      <option value="mexican">Mexican</option>
+                      <option value="indian">Indian</option>
+                      <option value="thai">Thai</option>
+                      <option value="mediterranean">Mediterranean</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+
               <div style={{ display: 'grid', gap: '0.75rem' }}>
-                {recipes.length === 0 && <p>No recipes yet.</p>}
-                {recipes.map((r) => (
+                {getFilteredRecipes().length === 0 && <p>No recipes match your filters.</p>}
+                {getFilteredRecipes().map((r) => (
                   <article key={r.id} style={{ border: '1px solid #eee', borderRadius: 6, padding: '0.75rem', background: '#fff' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                       <div style={{ flex: 1 }}>
@@ -1021,25 +1103,21 @@ function App() {
                           </div>
                         )}
                       </div>
-                      <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '0.5rem' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                         <button type="button" onClick={() => openEditModal(r)} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}>Edit</button>
-                        <button type="button" onClick={() => handleDeleteRecipe(r.id)} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#b00', color: '#fff' }}>Delete</button>
-                      </div>
-                        <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '0.5rem' }}>
-                          <button type="button" onClick={() => openEditModal(r)} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}>Edit</button>
-                          <button type="button" onClick={async () => {
-                            try {
-                              const res = await api.imports.autoTag(r.id);
-                              const updated = res?.data?.data || res?.data || res;
-                              if (updated) {
-                                setRecipes(recipes.map(rec => rec.id === r.id ? updated : rec));
-                              }
-                            } catch (err) {
-                              console.error('Auto-tag failed:', err);
+                        <button type="button" onClick={async () => {
+                          try {
+                            const res = await api.imports.autoTag(r.id);
+                            const updated = res?.data?.data || res?.data || res;
+                            if (updated) {
+                              setRecipes(recipes.map(rec => rec.id === r.id ? updated : rec));
                             }
-                          }} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#0066cc', color: '#fff' }}>Auto-tag</button>
-                          <button type="button" onClick={() => handleDeleteRecipe(r.id)} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#b00', color: '#fff' }}>Delete</button>
-                        </div>@@
+                          } catch (err) {
+                            console.error('Auto-tag failed:', err);
+                          }
+                        }} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#0066cc', color: '#fff' }}>Auto-tag</button>
+                        <button type="button" onClick={() => handleDeleteRecipe(r.id)} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#b00', color: '#fff' }}>Delete</button>
+                      </div>@@
             </>
           )}
         </div>
