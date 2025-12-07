@@ -45,6 +45,17 @@ export const schemas = {
   collectionRecipe: Joi.object({
     recipeId: Joi.number().required(),
   }),
+
+  urlImport: Joi.object({
+    url: Joi.string().uri().required(),
+    title: Joi.string().optional(),
+    description: Joi.string().optional(),
+  }),
+
+  socialImport: Joi.object({
+    url: Joi.string().uri().required(),
+    platform: Joi.string().valid('tiktok', 'instagram', 'youtube', 'shorts').required(),
+  }),
 };
 
 export const validate = (schema) => (req, res, next) => {

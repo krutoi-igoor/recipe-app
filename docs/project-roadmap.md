@@ -59,7 +59,7 @@ Development of a web-based recipe management application inspired by RecipeOne, 
 - [x] Database migrations
 - [x] API documentation
 - [x] Unit tests for backend logic
-- [ ] Basic deployment to Ubuntu server (pending)
+- [x] Basic deployment to Ubuntu server
 
 ### Success Criteria
 - Users can register and authenticate

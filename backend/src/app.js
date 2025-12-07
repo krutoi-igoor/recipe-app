@@ -8,6 +8,9 @@ import authRouter from './routes/auth.js';
 import recipesRouter from './routes/recipes.js';
 import mealPlansRouter from './routes/mealPlans.js';
 import collectionsRouter from './routes/collections.js';
+import importsRouter from './routes/imports.js';
+import searchRouter from './routes/search.js';
+import privacyRouter from './routes/privacy.js';
 
 const app = express();
 
@@ -25,6 +28,9 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/recipes', recipesRouter);
 app.use('/api/v1/meal-plans', mealPlansRouter);
 app.use('/api/v1/collections', collectionsRouter);
+app.use('/api/v1/imports', importsRouter);
+app.use('/api/v1/search', searchRouter);
+app.use('/api/v1/privacy', privacyRouter);
 
 // Basic root responder
 app.get('/api/v1', (_req, res) => {
