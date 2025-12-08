@@ -50,7 +50,27 @@ else
 fi
 
 echo ""
-echo "4. Creating collection..."
+echo "4. Testing auto-tag endpoint..."
+AUTOTAG=$(curl -s -X POST "$API/imports/$RECIPE_ID/auto-tag" \
+  -H "Authorization: Bearer $TOKEN")
+
+TAGS=$(echo "$AUTOTAG" | grep -o '"tags"' | head -1)
+if [ -n "$TAGS" ]; then
+  echo "✓ Auto-tag created tags"
+else
+  echo "✗ Auto-tag failed: $AUTOTAG"
+fi
+
+echo ""
+echo "5. Testing search endpoint..."
+SEARCH=$(curl -s -X GET "$API/search?q=Pasta" \
+  -H "Authorization: Bearer $TOKEN")
+
+FOUND=$(echo "$SEARCH" | grep -o '"id"' | wc -l)
+echo "✓ Search found $FOUND results"
+
+echo ""
+echo "6. Creating collection..."
 COLLECTION=$(curl -s -X POST "$API/collections" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \
@@ -64,7 +84,7 @@ else
 fi
 
 echo ""
-echo "5. Adding recipe to collection..."
+echo "7. Adding recipe to collection..."
 ADD=$(curl -s -X POST "$API/collections/$COLLECTION_ID/recipes" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \
@@ -78,7 +98,19 @@ else
 fi
 
 echo ""
-echo "6. Getting shopping list..."
+echo "8. Testing privacy export..."
+EXPORT=$(curl -s -X GET "$API/privacy/export/json" \
+  -H "Authorization: Bearer $TOKEN")
+
+USER_DATA=$(echo "$EXPORT" | grep -o '"email"' | head -1)
+if [ -n "$USER_DATA" ]; then
+  echo "✓ Privacy export successful"
+else
+  echo "✗ Privacy export failed: $EXPORT"
+fi
+
+echo ""
+echo "9. Getting shopping list..."
 SHOPPING=$(curl -s -X GET "$API/meal-plans/shopping-list?startDate=2025-12-01&endDate=2025-12-31" \
   -H "Authorization: Bearer $TOKEN")
 
