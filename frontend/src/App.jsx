@@ -1050,6 +1050,7 @@ function App() {
             </>
           )}
         </div>
+      </section>
 
       {isAuthed && (
         <section style={{ marginTop: '2rem' }}>
