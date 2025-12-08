@@ -1042,11 +1042,14 @@ function App() {
                           }
                         }} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#0066cc', color: '#fff' }}>Auto-tag</button>
                         <button type="button" onClick={() => handleDeleteRecipe(r.id)} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#b00', color: '#fff' }}>Delete</button>
-                      </div>@@
-            </>
-          )}
-        </div>
-      </section>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
 
       {isAuthed && (
         <section style={{ marginTop: '2rem' }}>
