@@ -400,41 +400,7 @@ function App() {
     }
   };
 
-  const handleImportFromUrl = async (e) => {
-    e.preventDefault();
-    const url = importUrl.trim();
-    if (!url) {
-      setImportStatus('error');
-      setImportMessage('Enter a recipe URL');
-      return;
-    }
-
-    setImportStatus('loading');
-    setImportMessage('');
-    setImportPreview(null);
-
-    try {
-      const res = await api.imports.fromUrl({
-        url,
-        title: importTitle || undefined,
-        description: importDescription || undefined,
-      });
-
-      const recipe = res?.data?.data || res?.data || res;
-      setImportPreview(recipe);
-      setImportStatus('success');
-      setImportMessage('Imported. Review below and edit in Recipes.');
-      setImportUrl('');
-      setImportTitle('');
-      setImportDescription('');
-      await loadRecipes();
-    } catch (err) {
-      setImportStatus('error');
-      setImportMessage(err.message || 'Import failed');
-    }
-  };
-
-    const handleImportFromSocial = async (e) => {
+  const handleImportFromSocial = async (e) => {
       e.preventDefault();
       const url = socialUrl.trim();
       if (!url) {
