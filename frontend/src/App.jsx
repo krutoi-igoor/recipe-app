@@ -1047,9 +1047,9 @@ function App() {
                   </article>
                 ))}
               </div>
-            </div>
-          </div>
-        </section>
+            </>
+          )}
+        </div>
 
       {isAuthed && (
         <section style={{ marginTop: '2rem' }}>
