@@ -76,13 +76,7 @@ function App() {
   const [importStatus, setImportStatus] = useState('idle');
   const [importMessage, setImportMessage] = useState('');
   const [importPreview, setImportPreview] = useState(null);
-    const [importUrl, setImportUrl] = useState('');
-    const [importTitle, setImportTitle] = useState('');
-    const [importDescription, setImportDescription] = useState('');
-    const [importStatus, setImportStatus] = useState('idle');
-    const [importMessage, setImportMessage] = useState('');
-    const [importPreview, setImportPreview] = useState(null);
-    const [importTab, setImportTab] = useState('url'); // 'url' | 'social' | 'image'
+  const [importTab, setImportTab] = useState('url'); // 'url' | 'social' | 'image'
   
     // Social import state
     const [socialUrl, setSocialUrl] = useState('');
