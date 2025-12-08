@@ -394,39 +394,45 @@ function App() {
 
       setEditStatus('success');
       setEditMessage('Recipe updated');
-    const handleImportFromUrl = async (e) => {
-      e.preventDefault();
-      const url = importUrl.trim();
-      if (!url) {
-        setImportStatus('error');
-        setImportMessage('Enter a recipe URL');
-        return;
-      }
+    } catch (err) {
+      setEditStatus('error');
+      setEditMessage(err.message || 'Could not update recipe');
+    }
+  };
 
-      setImportStatus('loading');
-      setImportMessage('');
-      setImportPreview(null);
+  const handleImportFromUrl = async (e) => {
+    e.preventDefault();
+    const url = importUrl.trim();
+    if (!url) {
+      setImportStatus('error');
+      setImportMessage('Enter a recipe URL');
+      return;
+    }
 
-      try {
-        const res = await api.imports.fromUrl({
-          url,
-          title: importTitle || undefined,
-          description: importDescription || undefined,
-        });
+    setImportStatus('loading');
+    setImportMessage('');
+    setImportPreview(null);
 
-        const recipe = res?.data?.data || res?.data || res;
-        setImportPreview(recipe);
-        setImportStatus('success');
-        setImportMessage('Imported. Review below and edit in Recipes.');
-        setImportUrl('');
-        setImportTitle('');
-        setImportDescription('');
-        await loadRecipes();
-      } catch (err) {
-        setImportStatus('error');
-        setImportMessage(err.message || 'Import failed');
-      }
-    };
+    try {
+      const res = await api.imports.fromUrl({
+        url,
+        title: importTitle || undefined,
+        description: importDescription || undefined,
+      });
+
+      const recipe = res?.data?.data || res?.data || res;
+      setImportPreview(recipe);
+      setImportStatus('success');
+      setImportMessage('Imported. Review below and edit in Recipes.');
+      setImportUrl('');
+      setImportTitle('');
+      setImportDescription('');
+      await loadRecipes();
+    } catch (err) {
+      setImportStatus('error');
+      setImportMessage(err.message || 'Import failed');
+    }
+  };
 
     const handleImportFromSocial = async (e) => {
       e.preventDefault();
@@ -479,21 +485,6 @@ function App() {
       } catch (err) {
         setImageStatus('error');
         setImageMessage(err.message || 'Image import failed');
-      }
-    };
-
-    const handleUpdateRecipe = async (e) => {
-      e.preventDefault();
-      setEditStatus('loading');
-      try {
-        await api.recipes.update(editingRecipe.id, editForm);
-        setEditStatus('success');
-        setEditMessage('Recipe updated!');
-        await loadRecipes();
-        setTimeout(closeEditModal, 800);
-      } catch (err) {
-        setEditStatus('error');
-        setEditMessage(err.message || 'Could not update recipe');
       }
     };
 
