@@ -480,14 +480,22 @@ function App() {
         setImageStatus('error');
         setImageMessage(err.message || 'Image import failed');
       }
-    };@@
-      await loadRecipes();
-      setTimeout(closeEditModal, 800);
-    } catch (err) {
-      setEditStatus('error');
-      setEditMessage(err.message || 'Could not update recipe');
-    }
-  };
+    };
+
+    const handleUpdateRecipe = async (e) => {
+      e.preventDefault();
+      setEditStatus('loading');
+      try {
+        await api.recipes.update(editingRecipe.id, editForm);
+        setEditStatus('success');
+        setEditMessage('Recipe updated!');
+        await loadRecipes();
+        setTimeout(closeEditModal, 800);
+      } catch (err) {
+        setEditStatus('error');
+        setEditMessage(err.message || 'Could not update recipe');
+      }
+    };
 
   const handleDeleteRecipe = async (id) => {
     if (!window.confirm('Delete this recipe?')) return;
