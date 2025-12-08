@@ -154,14 +154,14 @@ function App() {
   };
                   </div>
 
-                  <div style={{ border: '1px dashed #cdd4e0', borderRadius: 8, padding: '1rem', background: '#f8fbff', marginBottom: '1rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                  <div style={{ border: '1px solid #e0e7ff', borderRadius: 12, padding: '1.5rem', background: 'linear-gradient(135deg, #f0f4ff 0%, #f8fbff 100%)', marginBottom: '1.5rem', boxShadow: '0 1px 3px rgba(37, 99, 235, 0.1)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '1rem', marginBottom: '1rem' }}>
                       <div>
-                        <div className="chip" style={{ marginBottom: '0.35rem' }}>New</div>
-                        <h3 style={{ margin: '0 0 0.25rem' }}>Import from Social Media</h3>
-                        <p style={{ margin: 0, color: '#4a5568' }}>TikTok, Instagram, YouTube, or Shorts links</p>
+                        <div className="chip" style={{ marginBottom: '0.5rem', background: 'rgba(16, 185, 129, 0.1)', color: '#059669' }}>Import</div>
+                        <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.2rem', fontWeight: '700' }}>Social Media</h3>
+                        <p style={{ margin: 0, color: '#5c6475', fontSize: '0.9rem' }}>TikTok, Instagram, YouTube, or Shorts links</p>
                       </div>
-                      <span style={{ fontSize: '0.9rem', color: '#5c6475' }}>Beta</span>
+                      <span style={{ fontSize: '0.8rem', fontWeight: '600', background: '#fef3c7', color: '#92400e', padding: '0.3rem 0.6rem', borderRadius: '999px' }}>Beta</span>
                     </div>
 
                     <form onSubmit={handleImportFromSocial} style={{ display: 'grid', gap: '0.5rem' }}>
