@@ -97,6 +97,10 @@ function App() {
     const [selectedDietary, setSelectedDietary] = useState('');
     const [selectedCuisine, setSelectedCuisine] = useState('');
     const [filterOptions, setFilterOptions] = useState({ mealTypes: [], dietaries: [], cuisines: [] });
+    
+    // Saved searches state
+    const [savedSearches, setSavedSearches] = useState([]);
+    const [savingSearch, setSavingSearch] = useState(false);
   
   const [editingRecipe, setEditingRecipe] = useState(null);
   const [editForm, setEditForm] = useState(initialRecipe);
@@ -152,6 +156,7 @@ function App() {
       const res = await api.me();
       setUser(res.data || res.user || res);
       await loadRecipes();
+      await loadSavedSearches();
     } catch (err) {
       api.clearTokens();
       setUser(null);
@@ -174,6 +179,17 @@ function App() {
       setRecipes(normalized);
     } catch (err) {
       setRecipeMessage(err.message || 'Could not load recipes');
+    }
+  };
+
+  const loadSavedSearches = async () => {
+    try {
+      const res = await api.savedSearches.list();
+      const payload = res?.data ?? res;
+      const items = Array.isArray(payload) ? payload : payload?.searches || [];
+      setSavedSearches(items);
+    } catch (err) {
+      console.error('Could not load saved searches:', err);
     }
   };
 
@@ -902,7 +918,26 @@ function App() {
 
               <div style={{ display: 'grid', gap: '0.75rem', marginBottom: '1rem', padding: '1rem', border: '1px solid #e2e8f0', borderRadius: 6, background: '#f8fbff' }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.35rem', fontWeight: 600 }}>Search recipes</label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                    <label style={{ fontWeight: 600 }}>Search recipes</label>
+                    <button type="button" onClick={async () => {
+                      setSavingSearch(true);
+                      try {
+                        await api.savedSearches.save('Search: ' + (searchQuery || 'all'), {
+                          query: searchQuery,
+                          mealType: selectedMealType,
+                          dietary: selectedDietary,
+                          cuisine: selectedCuisine,
+                          tags: selectedTags,
+                        });
+                        loadSavedSearches();
+                      } catch (err) {
+                        alert('Failed to save search: ' + err.message);
+                      } finally {
+                        setSavingSearch(false);
+                      }
+                    }} disabled={savingSearch} style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', cursor: 'pointer' }}>Save Search</button>
+                  </div>
                   <input
                     type="text"
                     placeholder="Search by title or ingredients..."
@@ -910,6 +945,22 @@ function App() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     style={{ width: '100%' }}
                   />
+                  {savedSearches.length > 0 && (
+                    <div style={{ marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                      {savedSearches.map(ss => (
+                        <button key={ss.id} type="button" onClick={() => {
+                          const q = typeof ss.query === 'string' ? JSON.parse(ss.query) : ss.query;
+                          setSearchQuery(q.query || '');
+                          setSelectedMealType(q.mealType || '');
+                          setSelectedDietary(q.dietary || '');
+                          setSelectedCuisine(q.cuisine || '');
+                          setSelectedTags(q.tags || []);
+                        }} style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', background: '#dbeafe', cursor: 'pointer', borderRadius: 3 }}>
+                          {ss.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
