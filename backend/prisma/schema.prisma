@@ -11,23 +11,6 @@ generator client {
   binaryTargets = ["native", "debian-openssl-3.0.x", "windows"]
 }
 
-
-model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  username  String  @unique
-  password  String
-  firstName String?
-  lastName  String?
-  
-  recipes     Recipe[]
-  mealPlans   MealPlan[]
-  collections Collection[]
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Recipe {
   id          Int     @id @default(autoincrement())
   userId      Int
@@ -41,9 +24,18 @@ model Recipe {
   tags        String? // comma-separated or JSON
   imageUrl    String?
   
+  // Enhancement fields
+  rating      Int?    // 1-5 star rating (average of all ratings)
+  ratingCount Int     @default(0) // number of times rated
+  userNotes   String? // personal notes about recipe
+  sourceUrl   String? // where recipe was imported from
+  sourceType  String? // 'url', 'social', 'image', 'manual'
+  difficulty  String? // 'easy', 'medium', 'hard'
+  
   user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   mealPlans   MealPlan[]
   collectionRecipes CollectionRecipe[]
+  ratings     Rating[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -52,17 +44,18 @@ model Recipe {
 }
 
 model MealPlan {
-  id        Int     @id @default(autoincrement())
-  userId    Int
-  date      DateTime
-  recipeId  Int?
-  notes     String?
+  id          Int     @id @default(autoincrement())
+  userId      Int
+  date        DateTime
+  recipeId    Int?
+  notes       String?
+  servingSize Int     @default(1) // serving multiplier
   
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  recipe    Recipe? @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe      Recipe? @relation(fields: [recipeId], references: [id], onDelete: SetNull)
   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   
   @@unique([userId, date])
   @@index([userId, date])
@@ -81,6 +74,54 @@ model Collection {
   updatedAt DateTime @updatedAt
   
   @@index([userId])
+}
+
+model Rating {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  recipeId  Int
+  score     Int     // 1-5
+  
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe    Recipe  @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([userId, recipeId])
+  @@index([recipeId])
+}
+
+model SavedSearch {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  name      String  // friendly name for search
+  query     String  // search query JSON
+  
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  username  String  @unique
+  password  String
+  firstName String?
+  lastName  String?
+  
+  recipes       Recipe[]
+  mealPlans     MealPlan[]
+  collections   Collection[]
+  ratings       Rating[]
+  savedSearches SavedSearch[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model CollectionRecipe {
