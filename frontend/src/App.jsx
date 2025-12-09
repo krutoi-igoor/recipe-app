@@ -69,6 +69,7 @@ function App() {
   const [ingredients, setIngredients] = useState([{ ...emptyIngredient }]);
   const [recipeStatus, setRecipeStatus] = useState('idle');
   const [recipeMessage, setRecipeMessage] = useState('');
+  const [selectedRecipeIds, setSelectedRecipeIds] = useState([]);
 
   const [importUrl, setImportUrl] = useState('');
   const [importTitle, setImportTitle] = useState('');
@@ -96,6 +97,7 @@ function App() {
     const [selectedMealType, setSelectedMealType] = useState('');
     const [selectedDietary, setSelectedDietary] = useState('');
     const [selectedCuisine, setSelectedCuisine] = useState('');
+    const [selectedDifficulty, setSelectedDifficulty] = useState('');
     const [filterOptions, setFilterOptions] = useState({ mealTypes: [], dietaries: [], cuisines: [] });
     
     // Saved searches state
@@ -111,13 +113,15 @@ function App() {
   const [mealPlans, setMealPlans] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showMealPlanForm, setShowMealPlanForm] = useState(false);
-  const [mealPlanForm, setMealPlanForm] = useState({ date: new Date().toISOString().split('T')[0], recipeId: '', notes: '' });
+  const [mealPlanForm, setMealPlanForm] = useState({ date: new Date().toISOString().split('T')[0], recipeId: '', notes: '', servingSize: 1 });
   const [mealPlanStatus, setMealPlanStatus] = useState('idle');
   const [mealPlanMessage, setMealPlanMessage] = useState('');
   
   const [shoppingList, setShoppingList] = useState([]);
   const [shoppingListStartDate, setShoppingListStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [shoppingListEndDate, setShoppingListEndDate] = useState(new Date(Date.now() + 7*24*60*60*1000).toISOString().split('T')[0]);
+  const [shoppingListChecked, setShoppingListChecked] = useState({});
+  const [shoppingListSort, setShoppingListSort] = useState('name'); // name, category, unchecked
   
   const [collections, setCollections] = useState([]);
   const [showNewCollectionForm, setShowNewCollectionForm] = useState(false);
@@ -343,10 +347,13 @@ function App() {
       if (selectedMealType && !tags.includes(selectedMealType)) return false;
       if (selectedDietary && !tags.some(t => t.toLowerCase().includes(selectedDietary.toLowerCase()))) return false;
       if (selectedCuisine && !tags.some(t => t.toLowerCase().includes(selectedCuisine.toLowerCase()))) return false;
+      
+      // Filter by difficulty
+      if (selectedDifficulty && r.difficulty !== selectedDifficulty) return false;
 
       return true;
     });
-  }, [recipes, searchQuery, selectedMealType, selectedDietary, selectedCuisine]);
+  }, [recipes, searchQuery, selectedMealType, selectedDietary, selectedCuisine, selectedDifficulty]);
 
 
   const updateIngredient = useCallback((index, key, value) => {
@@ -517,8 +524,9 @@ function App() {
         date: new Date(mealPlanForm.date).toISOString(),
         recipeId: mealPlanForm.recipeId ? parseInt(mealPlanForm.recipeId) : null,
         notes: mealPlanForm.notes,
+        servingSize: parseInt(mealPlanForm.servingSize) || 1,
       });
-      setMealPlanForm({ date: new Date().toISOString().split('T')[0], recipeId: '', notes: '' });
+      setMealPlanForm({ date: new Date().toISOString().split('T')[0], recipeId: '', notes: '', servingSize: 1 });
       setShowMealPlanForm(false);
       setMealPlanStatus('success');
       setMealPlanMessage('Meal plan created');
@@ -581,6 +589,22 @@ function App() {
       a.download = `shopping-list-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
     }
+  };
+
+  const getSortedShoppingList = () => {
+    const sorted = [...shoppingList];
+    if (shoppingListSort === 'unchecked') {
+      return sorted.sort((a, b) => {
+        const aChecked = shoppingListChecked[a.name] || false;
+        const bChecked = shoppingListChecked[b.name] || false;
+        return aChecked - bChecked; // unchecked first
+      });
+    } else if (shoppingListSort === 'category') {
+      // Group by first character/category
+      return sorted.sort((a, b) => a.name.localeCompare(b.name));
+    }
+    // default: name sort
+    return sorted.sort((a, b) => a.name.localeCompare(b.name));
   };
 
   const loadCollections = async () => {
@@ -708,7 +732,7 @@ function App() {
               <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>{date.getDate()}</div>
               {getMealPlanForDate(date) && (
                 <div style={{ fontSize: '0.8rem', color: '#0a0', background: '#f0fff0', padding: '0.2rem 0.35rem', borderRadius: 2, marginBottom: '0.25rem' }}>
-                  {getMealPlanForDate(date).recipe?.title || 'No recipe'}
+                  {getMealPlanForDate(date).recipe?.title || 'No recipe'}{getMealPlanForDate(date).servingSize && getMealPlanForDate(date).servingSize > 1 ? ` (×${getMealPlanForDate(date).servingSize})` : ''}
                 </div>
               )}
             </div>
@@ -963,7 +987,7 @@ function App() {
                   )}
                 </div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '0.75rem' }}>
                   <label style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                     <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Meal Type</span>
                     <select value={selectedMealType} onChange={(e) => setSelectedMealType(e.target.value)} style={{ padding: '0.5rem' }}>
@@ -1000,14 +1024,53 @@ function App() {
                       <option value="mediterranean">Mediterranean</option>
                     </select>
                   </label>
+                  
+                  <label style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Difficulty</span>
+                    <select value={selectedDifficulty} onChange={(e) => setSelectedDifficulty(e.target.value)} style={{ padding: '0.5rem' }}>
+                      <option value="">All</option>
+                      <option value="easy">Easy</option>
+                      <option value="medium">Medium</option>
+                      <option value="hard">Hard</option>
+                    </select>
+                  </label>
                 </div>
               </div>
 
               <div style={{ display: 'grid', gap: '0.75rem' }}>
                 {getFilteredRecipes().length === 0 && <p>No recipes match your filters.</p>}
+                {selectedRecipeIds.length > 0 && (
+                  <div style={{ padding: '0.75rem', background: '#e0f2fe', borderRadius: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>{selectedRecipeIds.length} recipe{selectedRecipeIds.length > 1 ? 's' : ''} selected</span>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button type="button" onClick={async () => {
+                        try {
+                          await api.bulk.deleteRecipes(selectedRecipeIds);
+                          setSelectedRecipeIds([]);
+                          loadRecipes();
+                        } catch (err) {
+                          alert('Failed to delete recipes: ' + err.message);
+                        }
+                      }} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#b00', color: '#fff', cursor: 'pointer' }}>Delete All</button>
+                      <button type="button" onClick={() => setSelectedRecipeIds([])} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', cursor: 'pointer' }}>Clear Selection</button>
+                    </div>
+                  </div>
+                )}
                 {getFilteredRecipes().map((r) => (
-                  <article key={r.id} style={{ border: '1px solid #eee', borderRadius: 6, padding: '0.75rem', background: '#fff' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                  <article key={r.id} style={{ border: selectedRecipeIds.includes(r.id) ? '2px solid #0066cc' : '1px solid #eee', borderRadius: 6, padding: '0.75rem', background: selectedRecipeIds.includes(r.id) ? '#f0f8ff' : '#fff' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '0.5rem' }}>
+                      <input
+                        type="checkbox"
+                        checked={selectedRecipeIds.includes(r.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedRecipeIds([...selectedRecipeIds, r.id]);
+                          } else {
+                            setSelectedRecipeIds(selectedRecipeIds.filter(id => id !== r.id));
+                          }
+                        }}
+                        style={{ marginTop: '0.5rem', cursor: 'pointer' }}
+                      />
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
                           <h3 style={{ margin: 0 }}>{r.title}</h3>
@@ -1165,7 +1228,7 @@ function App() {
                           </div>
                           {mp.recipe && (
                             <div style={{ color: '#0a0', marginBottom: '0.25rem' }}>
-                              <strong>{mp.recipe.title}</strong>
+                              <strong>{mp.recipe.title}</strong>{mp.servingSize && mp.servingSize > 1 ? ` (×${mp.servingSize})` : ''}
                             </div>
                           )}
                           {mp.notes && <div style={{ color: '#666', fontSize: '0.9rem', marginBottom: '0.25rem' }}>{mp.notes}</div>}
@@ -1204,6 +1267,16 @@ function App() {
                       onChange={(e) => setMealPlanForm({ ...mealPlanForm, notes: e.target.value })}
                       rows={2}
                       placeholder="Add notes for this meal..."
+                    />
+                  </label>
+                  <label>
+                    Serving Size
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={mealPlanForm.servingSize}
+                      onChange={(e) => setMealPlanForm({ ...mealPlanForm, servingSize: parseInt(e.target.value) || 1 })}
                     />
                   </label>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -1250,19 +1323,42 @@ function App() {
               <p>No shopping list generated. Select a date range and click Generate.</p>
             ) : (
               <>
-                <div style={{ marginBottom: '1rem' }}>
+                <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      Sort by:
+                      <select value={shoppingListSort} onChange={(e) => setShoppingListSort(e.target.value)} style={{ padding: '0.35rem' }}>
+                        <option value="name">Name</option>
+                        <option value="unchecked">Unchecked first</option>
+                        <option value="category">Category</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                    {Object.values(shoppingListChecked).filter(Boolean).length} of {shoppingList.length} checked
+                  </div>
+                </div>
+                <div style={{ marginBottom: '1rem', maxHeight: '400px', overflowY: 'auto', border: '1px solid #ddd', borderRadius: 4 }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
-                      <tr style={{ borderBottom: '2px solid #ddd' }}>
+                      <tr style={{ borderBottom: '2px solid #ddd', background: '#f9f9f9' }}>
+                        <th style={{ textAlign: 'center', padding: '0.5rem', width: '40px' }}>✓</th>
                         <th style={{ textAlign: 'left', padding: '0.5rem' }}>Item</th>
                         <th style={{ textAlign: 'center', padding: '0.5rem', width: '80px' }}>Quantity</th>
                         <th style={{ textAlign: 'center', padding: '0.5rem', width: '80px' }}>Unit</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {shoppingList.map((item, idx) => (
-                        <tr key={idx} style={{ borderBottom: '1px solid #eee' }}>
-                          <td style={{ padding: '0.5rem' }}>{item.name}</td>
+                      {getSortedShoppingList().map((item, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid #eee', background: shoppingListChecked[item.name] ? '#f0f0f0' : '#fff' }}>
+                          <td style={{ textAlign: 'center', padding: '0.5rem' }}>
+                            <input
+                              type="checkbox"
+                              checked={shoppingListChecked[item.name] || false}
+                              onChange={(e) => setShoppingListChecked({ ...shoppingListChecked, [item.name]: e.target.checked })}
+                            />
+                          </td>
+                          <td style={{ padding: '0.5rem', textDecoration: shoppingListChecked[item.name] ? 'line-through' : 'none', color: shoppingListChecked[item.name] ? '#999' : '#000' }}>{item.name}</td>
                           <td style={{ textAlign: 'center', padding: '0.5rem' }}>{item.quantity}</td>
                           <td style={{ textAlign: 'center', padding: '0.5rem' }}>{item.unit}</td>
                         </tr>
