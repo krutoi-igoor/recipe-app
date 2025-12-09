@@ -414,6 +414,7 @@ function App() {
         instructions,
         ingredients: filteredIngredients,
         userNotes: editForm.userNotes || null,
+        difficulty: editForm.difficulty || null,
       });
 
       setEditStatus('success');
@@ -1035,6 +1036,22 @@ function App() {
                     </select>
                   </label>
                 </div>
+                <button type="button" onClick={async () => {
+                  const recipesWithoutDifficulty = recipes.filter(r => !r.difficulty);
+                  if (recipesWithoutDifficulty.length === 0) {
+                    alert('All recipes already have difficulty levels!');
+                    return;
+                  }
+                  try {
+                    for (const recipe of recipesWithoutDifficulty) {
+                      await api.enhancements.autoDetectDifficulty(recipe.id);
+                    }
+                    loadRecipes();
+                    alert(`Auto-detected difficulty for ${recipesWithoutDifficulty.length} recipes!`);
+                  } catch (err) {
+                    alert('Failed to auto-detect difficulty: ' + err.message);
+                  }
+                }} style={{ padding: '0.5rem 1rem', alignSelf: 'flex-end' }}>⚡ Auto-detect difficulty for all</button>
               </div>
 
               <div style={{ display: 'grid', gap: '0.75rem' }}>
@@ -1569,6 +1586,19 @@ function App() {
                   rows={2}
                   placeholder="Add your own notes about this recipe..."
                 />
+              </label>
+
+              <label>
+                Difficulty Level
+                <select
+                  value={editForm.difficulty || ''}
+                  onChange={(e) => setEditForm({ ...editForm, difficulty: e.target.value || null })}
+                >
+                  <option value="">-- Not set --</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
               </label>
 
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
