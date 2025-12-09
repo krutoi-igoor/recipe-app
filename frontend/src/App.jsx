@@ -390,6 +390,7 @@ function App() {
         description: editForm.description,
         instructions,
         ingredients: filteredIngredients,
+        userNotes: editForm.userNotes || null,
       });
 
       setEditStatus('success');
@@ -957,13 +958,35 @@ function App() {
                   <article key={r.id} style={{ border: '1px solid #eee', borderRadius: 6, padding: '0.75rem', background: '#fff' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                       <div style={{ flex: 1 }}>
-                        <h3 style={{ margin: '0 0 0.25rem' }}>{r.title}</h3>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                          <h3 style={{ margin: 0 }}>{r.title}</h3>
+                          {r.rating && (
+                            <span style={{ fontSize: '0.85rem', color: '#f59e0b' }} title={`${r.ratingCount} ratings`}>
+                              {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)} ({r.ratingCount})
+                            </span>
+                          )}
+                          {r.difficulty && (
+                            <span style={{ fontSize: '0.75rem', background: r.difficulty === 'hard' ? '#fecaca' : r.difficulty === 'medium' ? '#fcd34d' : '#bbf7d0', color: '#333', padding: '0.2rem 0.5rem', borderRadius: 3 }}>
+                              {r.difficulty}
+                            </span>
+                          )}
+                        </div>
+                        {r.userNotes && (
+                          <div style={{ margin: '0.25rem 0', padding: '0.5rem', background: '#fef3c7', borderRadius: 3, fontSize: '0.9rem', fontStyle: 'italic', color: '#92400e' }}>
+                            <strong>Notes:</strong> {r.userNotes}
+                          </div>
+                        )}
                         {r.createdAt && (
                           <div style={{ margin: '0 0 0.25rem', color: '#666', fontSize: '0.9rem' }}>
                             Created {new Date(r.createdAt).toLocaleString()}
                           </div>
                         )}
                         {renderDescription(r.description)}
+                        {r.sourceUrl && (
+                          <div style={{ margin: '0.25rem 0', fontSize: '0.85rem' }}>
+                            <strong>Source:</strong> <a href={r.sourceUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#0066cc' }}>{r.sourceType || 'Link'}</a>
+                          </div>
+                        )}
                         {r.ingredients?.length > 0 && (
                           <div style={{ marginBottom: '0.5rem' }}>
                             <strong>Ingredients</strong>
@@ -985,8 +1008,30 @@ function App() {
                           </div>
                         )}
                       </div>
-                      <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end', alignItems: 'center' }}>
                         <button type="button" onClick={() => openEditModal(r)} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}>Edit</button>
+                        <button type="button" onClick={async () => {
+                          try {
+                            await api.clone.recipe(r.id);
+                            loadRecipes();
+                          } catch (err) {
+                            console.error('Clone failed:', err);
+                            alert('Failed to clone recipe');
+                          }
+                        }} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#10b981', color: '#fff' }}>Clone</button>
+                        <div style={{ display: 'flex', gap: '2px' }}>
+                          {[1, 2, 3, 4, 5].map(star => (
+                            <span key={star} onClick={async () => {
+                              try {
+                                await api.ratings.rate(r.id, star);
+                                loadRecipes();
+                              } catch (err) {
+                                console.error('Rating failed:', err);
+                                alert('Failed to save rating');
+                              }
+                            }} style={{ cursor: 'pointer', fontSize: '1.2rem', color: star <= (r.rating || 0) ? '#f59e0b' : '#d1d5db' }} title={`Rate ${star} stars`}>★</span>
+                          ))}
+                        </div>
                         <button type="button" onClick={async () => {
                           try {
                             const res = await api.imports.autoTag(r.id);
@@ -1366,6 +1411,16 @@ function App() {
                   onChange={(e) => setEditForm({ ...editForm, instructions: e.target.value })}
                   rows={3}
                   required
+                />
+              </label>
+
+              <label>
+                Personal Notes
+                <textarea
+                  value={editForm.userNotes || ''}
+                  onChange={(e) => setEditForm({ ...editForm, userNotes: e.target.value })}
+                  rows={2}
+                  placeholder="Add your own notes about this recipe..."
                 />
               </label>
 

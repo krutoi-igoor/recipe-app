@@ -125,5 +125,43 @@ export const api = {
     autoTag: (recipeId) => request(`/imports/${recipeId}/auto-tag`, { method: 'POST', body: {}, auth: true }),
   },
 
+  // Enhancement features
+  ratings: {
+    rate: (recipeId, score) => request(`/ratings/${recipeId}`, { method: 'POST', body: { score }, auth: true }),
+    get: (recipeId) => request(`/ratings/${recipeId}`, { auth: true }),
+    getStats: (recipeId) => request(`/ratings/${recipeId}/stats`, { auth: true }),
+    delete: (recipeId) => request(`/ratings/${recipeId}`, { method: 'DELETE', auth: true }),
+  },
+
+  notes: {
+    update: (recipeId, notes) => request(`/notes/${recipeId}`, { method: 'PUT', body: { notes }, auth: true }),
+    get: (recipeId) => request(`/notes/${recipeId}`, { auth: true }),
+  },
+
+  clone: {
+    recipe: (recipeId) => request(`/clone/${recipeId}`, { method: 'POST', body: {}, auth: true }),
+  },
+
+  savedSearches: {
+    list: () => request('/saved-searches', { auth: true }),
+    save: (payload) => request('/saved-searches', { method: 'POST', body: payload, auth: true }),
+    update: (id, payload) => request(`/saved-searches/${id}`, { method: 'PUT', body: payload, auth: true }),
+    delete: (id) => request(`/saved-searches/${id}`, { method: 'DELETE', auth: true }),
+  },
+
+  bulk: {
+    addToCollection: (collectionId, recipeIds) => request('/bulk/add-to-collection', { method: 'POST', body: { collectionId, recipeIds }, auth: true }),
+    deleteRecipes: (recipeIds) => request('/bulk/delete', { method: 'POST', body: { recipeIds }, auth: true }),
+    exportRecipes: (recipeIds) => request('/bulk/export', { method: 'POST', body: { recipeIds }, auth: true }),
+  },
+
+  enhancements: {
+    updateDifficulty: (recipeId, difficulty) => request(`/enhancements/${recipeId}/difficulty`, { method: 'PUT', body: { difficulty }, auth: true }),
+    updateSource: (recipeId, sourceUrl, sourceType) => request(`/enhancements/${recipeId}/source`, { method: 'PUT', body: { sourceUrl, sourceType }, auth: true }),
+    getByDifficulty: (difficulty) => request(`/enhancements/recipes/difficulty?difficulty=${difficulty}`, { auth: true }),
+    getBySource: (sourceType) => request(`/enhancements/recipes/source?sourceType=${sourceType}`, { auth: true }),
+    autoDetectDifficulty: (recipeId) => request(`/enhancements/${recipeId}/auto-difficulty`, { method: 'POST', body: {}, auth: true }),
+  },
+
   rawGet: (path) => fetch(`${API_BASE}${path}`),
 };
