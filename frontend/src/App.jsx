@@ -70,6 +70,7 @@ function App() {
   const [recipeStatus, setRecipeStatus] = useState('idle');
   const [recipeMessage, setRecipeMessage] = useState('');
   const [selectedRecipeIds, setSelectedRecipeIds] = useState([]);
+  const [printingRecipe, setPrintingRecipe] = useState(null);
 
   const [importUrl, setImportUrl] = useState('');
   const [importTitle, setImportTitle] = useState('');
@@ -1150,6 +1151,7 @@ function App() {
                             alert('Failed to clone recipe');
                           }
                         }} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#10b981', color: '#fff' }}>Clone</button>
+                        <button type="button" onClick={() => setPrintingRecipe(r)} style={{ padding: '0.35rem 0.75rem', fontSize: '0.85rem', background: '#8b5cf6', color: '#fff' }}>🖨️ Print</button>
                         <div style={{ display: 'flex', gap: '2px' }}>
                           {[1, 2, 3, 4, 5].map(star => (
                             <span key={star} onClick={async () => {
@@ -1611,6 +1613,60 @@ function App() {
                 <div style={{ color: editStatus === 'error' ? '#b00' : '#0a0' }}>{editMessage}</div>
               )}
             </form>
+          </div>
+        </div>
+      )}
+
+      {printingRecipe && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#fff', borderRadius: 8, padding: '2rem', maxWidth: 700, width: '90%', maxHeight: '90vh', overflowY: 'auto', fontFamily: 'Calibri, sans-serif' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h1 style={{ marginTop: 0 }}>{printingRecipe.title}</h1>
+              <button type="button" onClick={() => setPrintingRecipe(null)} style={{ padding: '0.5rem 1rem', fontSize: '1rem', cursor: 'pointer' }}>✕</button>
+            </div>
+            
+            {printingRecipe.description && (
+              <p style={{ fontSize: '0.95rem', color: '#666', marginBottom: '1.5rem' }}>{printingRecipe.description}</p>
+            )}
+
+            <div style={{ columnCount: 2, columnGap: '2rem', marginBottom: '1.5rem' }}>
+              <h3 style={{ marginTop: 0, marginBottom: '0.75rem' }}>Ingredients</h3>
+              <ul style={{ margin: 0, paddingLeft: '1.5rem' }}>
+                {printingRecipe.ingredients?.map((ing, idx) => (
+                  <li key={idx} style={{ marginBottom: '0.4rem' }}>
+                    {ing.name}{ing.quantity ? ` — ${ing.quantity} ${ing.unit || ''}` : ''}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div style={{ marginBottom: '1.5rem', breakInside: 'avoid' }}>
+              <h3 style={{ marginTop: 0, marginBottom: '0.75rem' }}>Instructions</h3>
+              <ol style={{ margin: 0, paddingLeft: '1.5rem' }}>
+                {printingRecipe.instructions?.map((step, idx) => (
+                  <li key={idx} style={{ marginBottom: '0.5rem' }}>
+                    {step}
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            {printingRecipe.rating && (
+              <div style={{ padding: '0.75rem', background: '#f0f9ff', borderRadius: 4, marginBottom: '1rem', fontSize: '0.9rem' }}>
+                <strong>Rating:</strong> {'★'.repeat(printingRecipe.rating)}{'☆'.repeat(5 - printingRecipe.rating)} ({printingRecipe.ratingCount} ratings)
+              </div>
+            )}
+
+            {printingRecipe.difficulty && (
+              <div style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>
+                <strong>Difficulty:</strong> <span style={{ textTransform: 'capitalize' }}>{printingRecipe.difficulty}</span>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem', borderTop: '1px solid #ddd', paddingTop: '1rem' }}>
+              <button type="button" onClick={() => window.print()} style={{ padding: '0.5rem 1rem', background: '#0066cc', color: '#fff', cursor: 'pointer', flex: 1 }}>🖨️ Print</button>
+              <button type="button" onClick={() => setPrintingRecipe(null)} style={{ padding: '0.5rem 1rem', cursor: 'pointer', flex: 1 }}>Close</button>
+            </div>
           </div>
         </div>
       )}
