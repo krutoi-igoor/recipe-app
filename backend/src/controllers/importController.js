@@ -188,8 +188,19 @@ export const importFromSocial = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Import from social error:', error);
-    res.status(500).json({ success: false, error: 'Failed to import from social media' });
+    console.error('Import from social error:', error.message, error.stack);
+    
+    if (error.name === 'PrismaClientValidationError') {
+      return res.status(400).json({ success: false, error: 'Invalid recipe data' });
+    }
+    if (error.name === 'PrismaClientKnownRequestError') {
+      return res.status(400).json({ success: false, error: 'Database error: ' + error.message });
+    }
+    
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to import from social media: ' + (error.message || 'Unknown error') 
+    });
   }
 };
 

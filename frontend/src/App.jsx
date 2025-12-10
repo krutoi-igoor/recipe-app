@@ -456,7 +456,10 @@ function App() {
         await loadRecipes();
       } catch (err) {
         setSocialStatus('error');
-        setSocialMessage(err.message || 'Video import failed');
+        console.error('Social import error:', err);
+        // Extract error message - it could be in the error message itself
+        const errorMsg = err?.message || 'Video import failed';
+        setSocialMessage(errorMsg);
       }
     };
 
