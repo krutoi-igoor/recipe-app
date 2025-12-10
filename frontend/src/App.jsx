@@ -435,21 +435,28 @@ function App() {
         return;
       }
 
+      // Auto-detect platform from URL
+      let platform = 'youtube'; // default
+      if (url.includes('tiktok.com')) platform = 'tiktok';
+      else if (url.includes('instagram.com')) platform = 'instagram';
+      else if (url.includes('x.com') || url.includes('twitter.com')) platform = 'x';
+      else if (url.includes('youtube.com') || url.includes('youtu.be')) platform = 'youtube';
+
       setSocialStatus('loading');
       setSocialMessage('');
       setSocialPreview(null);
 
       try {
-        const res = await api.imports.fromSocial({ url });
+        const res = await api.imports.fromSocial({ url, platform });
         const recipe = res?.data?.data || res?.data || res;
         setSocialPreview(recipe);
         setSocialStatus('success');
-        setSocialMessage('Imported from social. Review below and edit in Recipes.');
+        setSocialMessage('Imported from video. Review below and edit in Recipes.');
         setSocialUrl('');
         await loadRecipes();
       } catch (err) {
         setSocialStatus('error');
-        setSocialMessage(err.message || 'Social import failed');
+        setSocialMessage(err.message || 'Video import failed');
       }
     };
 
@@ -870,6 +877,75 @@ function App() {
                         <strong>Instructions</strong>
                         <ol style={{ margin: '0.25rem 0 0', paddingLeft: '1.25rem' }}>
                           {importPreview.instructions.map((step, idx) => (
+                            <li key={idx}>{step}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div style={{ border: '1px dashed #cdd4e0', borderRadius: 8, padding: '1rem', background: '#fff8e1', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
+                  <div>
+                    <div className="chip" style={{ marginBottom: '0.35rem', background: '#ff9800', color: '#fff' }}>Video</div>
+                    <h3 style={{ margin: '0 0 0.25rem' }}>Import from YouTube/Social Media</h3>
+                    <p style={{ margin: 0, color: '#4a5568', fontSize: '0.9rem' }}>Paste a YouTube, TikTok, Instagram, or X video link</p>
+                  </div>
+                  <span style={{ fontSize: '0.9rem', color: '#5c6475' }}>Beta</span>
+                </div>
+
+                <form onSubmit={handleImportFromSocial} style={{ display: 'grid', gap: '0.5rem', marginTop: '0.75rem' }}>
+                  <input
+                    placeholder="https://www.youtube.com/watch?v=..."
+                    value={socialUrl}
+                    onChange={(e) => setSocialUrl(e.target.value)}
+                    required
+                  />
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <button type="submit" disabled={socialStatus === 'loading'}>
+                      {socialStatus === 'loading' ? 'Importing...' : 'Import video recipe'}
+                    </button>
+                    {socialMessage && (
+                      <span style={{ color: socialStatus === 'error' ? '#b00' : '#0a0' }}>{socialMessage}</span>
+                    )}
+                  </div>
+                </form>
+
+                {socialPreview && (
+                  <div style={{ marginTop: '0.75rem', padding: '0.75rem', border: '1px solid #e2e8f0', borderRadius: 6, background: '#fff' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '0.5rem' }}>
+                      <div>
+                        <div style={{ fontWeight: 700 }}>{socialPreview.title}</div>
+                        {socialPreview.sourceUrl && (
+                          <a href={socialPreview.sourceUrl} target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem' }}>
+                            Watch original video
+                          </a>
+                        )}
+                        {socialPreview.description && (
+                          <p style={{ margin: '0.35rem 0 0', color: '#4a5568', fontSize: '0.9rem' }}>{socialPreview.description}</p>
+                        )}
+                      </div>
+                      <span className="chip" style={{ background: '#ff9800', color: '#fff' }}>Video</span>
+                    </div>
+
+                    {socialPreview.ingredients?.length > 0 && (
+                      <div style={{ marginTop: '0.5rem' }}>
+                        <strong>Ingredients (edit in recipe list below)</strong>
+                        <ul style={{ margin: '0.25rem 0 0', paddingLeft: '1.25rem' }}>
+                          {socialPreview.ingredients.map((ing, idx) => (
+                            <li key={idx}>{ing.name || ing} {ing.quantity ? `— ${ing.quantity} ${ing.unit || ''}` : ''}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {socialPreview.instructions?.length > 0 && (
+                      <div style={{ marginTop: '0.5rem' }}>
+                        <strong>Instructions (edit in recipe list below)</strong>
+                        <ol style={{ margin: '0.25rem 0 0', paddingLeft: '1.25rem' }}>
+                          {socialPreview.instructions.map((step, idx) => (
                             <li key={idx}>{step}</li>
                           ))}
                         </ol>
