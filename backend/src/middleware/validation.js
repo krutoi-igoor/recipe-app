@@ -54,7 +54,7 @@ export const schemas = {
 
   socialImport: Joi.object({
     url: Joi.string().uri().required(),
-    platform: Joi.string().valid('tiktok', 'instagram', 'youtube', 'shorts').required(),
+    platform: Joi.string().valid('tiktok', 'instagram', 'youtube', 'shorts', 'x', 'twitter').required(),
   }),
 };
 

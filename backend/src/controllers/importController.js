@@ -152,6 +152,10 @@ export const importFromSocial = async (req, res) => {
       videoTitle = 'TikTok Recipe Video';
     } else if (platform.toLowerCase() === 'instagram' && url.includes('instagram')) {
       videoTitle = 'Instagram Recipe Video';
+    } else if ((platform.toLowerCase() === 'x' || platform.toLowerCase() === 'twitter') && (url.includes('x.com') || url.includes('twitter.com'))) {
+      const match = url.match(/status\/(\d+)/);
+      videoId = match ? match[1] : 'unknown';
+      videoTitle = `X Recipe Post - ${videoId}`;
     }
 
     const recipe = {
