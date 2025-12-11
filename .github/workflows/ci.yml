@@ -142,6 +142,22 @@ jobs:
           
           echo ".env file found, proceeding with migrations..."
           
+          # Check for failed migrations and apply fix if needed
+          source .env
+          FAILED_MIGRATION=$(psql "${DATABASE_URL}" -t -c "SELECT migration_name FROM _prisma_migrations WHERE finished_at IS NULL AND rolled_back_at IS NULL LIMIT 1;" 2>/dev/null | xargs || echo "")
+          
+          if [ ! -z "$FAILED_MIGRATION" ]; then
+            echo "Found failed migration: $FAILED_MIGRATION"
+            if [ -f fix-migration.sql ]; then
+              echo "Applying fix-migration.sql..."
+              psql "${DATABASE_URL}" -f fix-migration.sql
+              echo "Migration fix applied successfully"
+            else
+              echo "WARNING: fix-migration.sql not found, attempting to mark as rolled back..."
+              psql "${DATABASE_URL}" -c "UPDATE _prisma_migrations SET rolled_back_at = NOW(), finished_at = NULL WHERE migration_name = '$FAILED_MIGRATION' AND rolled_back_at IS NULL;"
+            fi
+          fi
+          
           # Apply Prisma migrations
           # Mark initial migration as applied if tables already exist (idempotent)
           npx prisma migrate resolve --applied 20251206063156_init || true
