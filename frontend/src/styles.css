@@ -88,19 +88,21 @@ button { font: inherit; cursor: pointer; }
 }
 
 .section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   overflow-x: hidden;
 }
 
 .section h2 {
-  margin: 0 0 0.5rem;
+  margin: 0 0 1rem;
+  font-size: 1.75rem;
+  color: var(--text);
 }
 
 .card {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 14px;
-  padding: 1rem;
+  padding: 1.5rem;
   box-shadow: var(--shadow);
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -108,9 +110,16 @@ button { font: inherit; cursor: pointer; }
   overflow-x: hidden;
 }
 
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
 .grid-2 {
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
@@ -241,14 +250,31 @@ label {
 article {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1rem;
+  border-radius: 12px;
+  padding: 1.5rem;
   transition: all 150ms ease;
   box-shadow: 0 2px 8px rgba(31, 37, 50, 0.04);
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-word;
   overflow-x: hidden;
+}
+
+article h3 {
+  font-size: 1.35rem;
+  line-height: 1.5;
+  margin: 0 0 0.5rem 0;
+  color: var(--text);
+}
+
+article ul, article ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+  line-height: 1.6;
+}
+
+article li {
+  margin-bottom: 0.35rem;
 }
 
 article:hover {
@@ -279,7 +305,49 @@ article:hover {
   }
 }
 
+.form-section {
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fafbfc;
+  margin-bottom: 1.5rem;
+}
+
+.form-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge-orange {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+.badge-beta {
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--primary-dark);
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 @media (max-width: 640px) {
   .topbar { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   .content { padding: 1rem; }
+  article { padding: 1rem; }
+  .card { padding: 1rem; }
+  .form-section { padding: 1rem; }
 }
