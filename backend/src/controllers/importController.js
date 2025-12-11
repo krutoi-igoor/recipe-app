@@ -14,10 +14,22 @@ const extractRecipeFromHTML = (html, url) => {
   const jsonLdScripts = $('script[type="application/ld+json"]');
   for (let i = 0; i < jsonLdScripts.length; i++) {
     try {
-      const data = JSON.parse($(jsonLdScripts[i]).html());
-      if (data['@type'] === 'Recipe' || (Array.isArray(data['@graph']) && data['@graph'].some(item => item['@type'] === 'Recipe'))) {
-        const recipe = Array.isArray(data['@graph']) ? data['@graph'].find(item => item['@type'] === 'Recipe') : data;
-        
+      let data = JSON.parse($(jsonLdScripts[i]).html());
+      let recipe = null;
+      
+      // Handle different JSON-LD structures
+      if (Array.isArray(data)) {
+        // JSON-LD is an array, find the Recipe object
+        recipe = data.find(item => item['@type'] === 'Recipe');
+      } else if (data['@type'] === 'Recipe') {
+        // JSON-LD is a single Recipe object
+        recipe = data;
+      } else if (Array.isArray(data['@graph'])) {
+        // JSON-LD uses @graph property
+        recipe = data['@graph'].find(item => item['@type'] === 'Recipe');
+      }
+      
+      if (recipe) {
         return {
           title: recipe.name || 'Imported Recipe',
           description: recipe.description || '',
@@ -30,7 +42,7 @@ const extractRecipeFromHTML = (html, url) => {
           prepTime: recipe.prepTime ? parseInt(recipe.prepTime.replace(/\D/g, '')) : null,
           cookTime: recipe.cookTime ? parseInt(recipe.cookTime.replace(/\D/g, '')) : null,
           servings: recipe.recipeYield ? parseInt(String(recipe.recipeYield).replace(/\D/g, '')) : null,
-          imageUrl: recipe.image?.url || (Array.isArray(recipe.image) ? recipe.image[0] : recipe.image) || null,
+          imageUrl: recipe.image?.url || (Array.isArray(recipe.image) ? recipe.image[0]?.url || recipe.image[0] : recipe.image) || null,
         };
       }
     } catch (e) {
